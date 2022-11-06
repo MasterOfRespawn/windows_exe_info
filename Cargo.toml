@@ -1,0 +1,13 @@
+[package]
+name = "icon_windows"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = ["auto", "ico", "png", "xxx", "xcf", "svg"]
+ico = []
+png = ["ico"]
+xxx = ["png"]
+svg = ["xxx"]
+xcf = ["xxx"]
+auto = []
