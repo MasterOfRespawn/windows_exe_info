@@ -4,10 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["auto", "ico", "png", "xxx", "xcf", "svg"]
+default = ["auto", "ico", "png", "xxx", "xcf", "svg", "placeholder"]
 ico = []
 png = ["ico"]
 xxx = ["png"]
 svg = ["xxx"]
 xcf = ["xxx"]
+placeholder = ["svg"]
 auto = []

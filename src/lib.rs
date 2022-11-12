@@ -21,6 +21,16 @@ const MAGICK_COMMAND_PNG_TO_ICO: &str =
 const MAGICK_COMMAND_XXX_TO_PNG: &str = 
 "convert [INPUT] -alpha on -background None -scale 256x256 -layers merge [OUTPUT]";
 
+#[cfg(feature="placeholder")]
+const PLACEHOLDER: &str = include_str!("../icon.svg");
+#[cfg(feature="placeholder")]
+pub fn placeholder(){
+    let output_dir = var("OUT_DIR").unwrap();
+    let png_path = output_dir.clone() + "icon.svg";
+    let _ = std::fs::File::options().write(true).create(true).open(&png_path).unwrap().write(PLACEHOLDER.as_bytes());
+    icon_svg(&std::path::PathBuf::from(&png_path));
+}
+
 #[cfg(feature="auto")]
 pub fn icon(path: &Path){
     if !path.exists() { panic!("File does not exist"); }
