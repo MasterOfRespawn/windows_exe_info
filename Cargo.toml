@@ -5,6 +5,7 @@ edition = "2021"
 
 [features]
 default = ["auto", "ico", "png", "xxx", "xcf", "svg", "placeholder"]
+build_cfg=["dep:build_cfg"]
 ico = []
 png = ["ico"]
 xxx = ["png"]
@@ -12,3 +13,6 @@ svg = ["xxx"]
 xcf = ["xxx"]
 placeholder = ["svg"]
 auto = []
+
+[dependencies]
+build_cfg = { version = "1.1.0", optional = true }

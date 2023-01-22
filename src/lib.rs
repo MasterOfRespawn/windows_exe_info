@@ -1,5 +1,9 @@
 #![feature(exit_status_error)]
 
+#[cfg(feature="build_cfg")]
+#[macro_use]
+extern crate build_cfg;
+
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
@@ -7,6 +11,9 @@ use std::fs::OpenOptions;
 use std::env::var;
 
 const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"";
+#[cfg(feature="build_cfg")]
+const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
+#[cfg(not(feature="build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
 const MAGICK_COMMAND_PNG_TO_ICO: &str = 
 "convert [INPUT] -background None
@@ -19,7 +26,7 @@ const MAGICK_COMMAND_PNG_TO_ICO: &str =
 ( -clone 6 -scale 8x8 -extent 8x8 -background None -alpha on )
 -alpha on -colors 256 [OUTPUT]";
 const MAGICK_COMMAND_XXX_TO_PNG: &str = 
-"convert [INPUT] -alpha on -background None -scale 256x256 -layers merge [OUTPUT]";
+"convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
 
 #[cfg(feature="placeholder")]
 const PLACEHOLDER: &str = include_str!("../icon.svg");
@@ -65,18 +72,32 @@ pub fn icon_ico(path: &Path){
         panic!("An error occurred while writing the resource file.");
     }
 
-    let _ = Command::new("windres")
-    .args(WINDRES_COMMAND
+    let args = WINDRES_COMMAND
         .replace("[INPUT]", buildres_file.as_str())
-        .replace("[OUTPUT]", resource_file.as_str())
-        .split(" "))
-    .spawn()
-    .expect("Execution failed")
-    .wait()
-    .expect("Execution failed")
-    .exit_ok()
-    .expect("Command Failed");
+        .replace("[OUTPUT]", resource_file.as_str());
+    
+    #[cfg(feature="build_cfg")]
+    let args = if build_cfg!(target_os = "windows") {
+        if build_cfg!(target_pointer_width = "64"){
+            args.replace("[ARCH]", "pe-x86-64")
+        } else {
+            args.replace("[ARCH]", "pe-i386")
+        }
+    } else {
+        panic!("Invalid target operating system");
+    };
+    
+    let _ = Command::new("windres")
+        .args(args
+            .split(" "))
+        .spawn()
+        .expect("Execution failed")
+        .wait()
+        .expect("Execution failed")
+        .exit_ok()
+        .expect("Command Failed");
 
+    #[cfg(target_family="windows")]
     println!("cargo:rustc-link-arg={resource_file}"); // Tell it to link
 }
 
