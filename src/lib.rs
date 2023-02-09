@@ -1,4 +1,5 @@
 #![feature(exit_status_error)]
+#![allow(dead_code)]
 
 #[cfg(feature = "build_cfg")]
 #[macro_use]
@@ -19,14 +20,14 @@ const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
 const MAGICK_COMMAND_PNG_TO_ICO: &str = "convert [INPUT] -background None
-( -clone 0 -scale 256x256 -extent 256x256 -background None -alpha on )
-( -clone 1 -scale 128x128 -extent 128x128 -background None -alpha on )
-( -clone 2 -scale 64x64 -extent 64x64 -background None -alpha on )
-( -clone 3 -scale 48x48 -extent 48x48 -background None -alpha on )
-( -clone 4 -scale 32x32 -extent 32x32 -background None -alpha on )
-( -clone 5 -scale 16x16 -extent 16x16 -background None -alpha on )
-( -clone 6 -scale 8x8 -extent 8x8 -background None -alpha on )
--alpha on -colors 256 [OUTPUT]";
+                                                                                                                ( -clone 0 -scale 256x256 -extent 256x256 -background None -alpha on )
+                                                                                                                ( -clone 1 -scale 128x128 -extent 128x128 -background None -alpha on )
+                                                                                                                ( -clone 2 -scale 64x64 -extent 64x64 -background None -alpha on )
+                                                                                                                ( -clone 3 -scale 48x48 -extent 48x48 -background None -alpha on )
+                                                                                                                ( -clone 4 -scale 32x32 -extent 32x32 -background None -alpha on )
+                                                                                                                ( -clone 5 -scale 16x16 -extent 16x16 -background None -alpha on )
+                                                                                                                ( -clone 6 -scale 8x8 -extent 8x8 -background None -alpha on )
+                                                                                                                -alpha on -colors 256 [OUTPUT]";
 const MAGICK_COMMAND_XXX_TO_PNG: &str =
     "convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
 
@@ -86,29 +87,28 @@ pub fn icon_ico(path: &Path) {
     #[cfg(feature = "embed_resource")]
     embed_resource::compile(buildres_file);
 
+    let resource_file = output_dir.clone() + "icon.res";
+
+    let mut file = OpenOptions::new()
+        .create(true)
+        .write(true)
+        .open(buildres_file.as_str())
+        .unwrap();
+    let resource_script_content = WINDRES_RESOURCE_SCRIPT.replace(
+        "[PATH]",
+        &path
+            .as_os_str()
+            .to_str()
+            .unwrap()
+            .to_string()
+            .replace("\\", "/"),
+    );
+    if resource_script_content.len() != file.write(resource_script_content.as_bytes()).unwrap() {
+        panic!("An error occurred while writing the resource file.");
+    }
+
     #[cfg(not(feature = "embed_resource"))]
     {
-        let resource_file = output_dir.clone() + "icon.res";
-
-        let mut file = OpenOptions::new()
-            .create(true)
-            .write(true)
-            .open(buildres_file.as_str())
-            .unwrap();
-        let resource_script_content = WINDRES_RESOURCE_SCRIPT.replace(
-            "[PATH]",
-            &path
-                .as_os_str()
-                .to_str()
-                .unwrap()
-                .to_string()
-                .replace("\\", "/"),
-        );
-        if resource_script_content.len() != file.write(resource_script_content.as_bytes()).unwrap()
-        {
-            panic!("An error occurred while writing the resource file.");
-        }
-
         let args = WINDRES_COMMAND
             .replace("[INPUT]", buildres_file.as_str())
             .replace("[OUTPUT]", resource_file.as_str());
