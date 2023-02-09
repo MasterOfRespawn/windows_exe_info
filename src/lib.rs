@@ -84,8 +84,6 @@ pub fn icon_ico(path: &Path) {
 
     let output_dir = var("OUT_DIR").unwrap();
     let buildres_file = output_dir.clone() + "icon.rc";
-    #[cfg(feature = "embed_resource")]
-    embed_resource::compile(buildres_file);
 
     let resource_file = output_dir.clone() + "icon.res";
 
@@ -107,6 +105,9 @@ pub fn icon_ico(path: &Path) {
         panic!("An error occurred while writing the resource file.");
     }
 
+    #[cfg(feature = "embed_resource")]
+    embed_resource::compile(buildres_file);
+    
     #[cfg(not(feature = "embed_resource"))]
     {
         let args = WINDRES_COMMAND
