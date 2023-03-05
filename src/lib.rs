@@ -5,7 +5,6 @@
 #[macro_use]
 extern crate build_cfg;
 #[cfg(feature = "embed_resource")]
-#[macro_use]
 extern crate embed_resource;
 
 use std::env::var;
@@ -20,14 +19,14 @@ const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
 const MAGICK_COMMAND_PNG_TO_ICO: &str = "convert [INPUT] -background None
-                                                                                                                ( -clone 0 -scale 256x256 -extent 256x256 -background None -alpha on )
-                                                                                                                ( -clone 1 -scale 128x128 -extent 128x128 -background None -alpha on )
-                                                                                                                ( -clone 2 -scale 64x64 -extent 64x64 -background None -alpha on )
-                                                                                                                ( -clone 3 -scale 48x48 -extent 48x48 -background None -alpha on )
-                                                                                                                ( -clone 4 -scale 32x32 -extent 32x32 -background None -alpha on )
-                                                                                                                ( -clone 5 -scale 16x16 -extent 16x16 -background None -alpha on )
-                                                                                                                ( -clone 6 -scale 8x8 -extent 8x8 -background None -alpha on )
-                                                                                                                -alpha on -colors 256 [OUTPUT]";
+( -clone 0 -scale 256x256 -extent 256x256 -background None -alpha on )
+( -clone 1 -scale 128x128 -extent 128x128 -background None -alpha on )
+( -clone 2 -scale 64x64 -extent 64x64 -background None -alpha on )
+( -clone 3 -scale 48x48 -extent 48x48 -background None -alpha on )
+( -clone 4 -scale 32x32 -extent 32x32 -background None -alpha on )
+( -clone 5 -scale 16x16 -extent 16x16 -background None -alpha on )
+( -clone 6 -scale 8x8 -extent 8x8 -background None -alpha on )
+-alpha on -colors 256 [OUTPUT]";
 const MAGICK_COMMAND_XXX_TO_PNG: &str =
     "convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
 
@@ -36,7 +35,7 @@ const PLACEHOLDER: &str = include_str!("../icon.svg");
 #[cfg(feature = "placeholder")]
 pub fn placeholder() {
     let output_dir = var("OUT_DIR").unwrap();
-    let png_path = output_dir.clone() + "icon.svg";
+    let png_path = output_dir.clone() + "/icon.svg";
     let _ = std::fs::File::options()
         .write(true)
         .create(true)
@@ -83,9 +82,7 @@ pub fn icon_ico(path: &Path) {
     }
 
     let output_dir = var("OUT_DIR").unwrap();
-    let buildres_file = output_dir.clone() + "icon.rc";
-
-    let resource_file = output_dir.clone() + "icon.res";
+    let buildres_file = output_dir.clone() + "/icon.rc";
 
     let mut file = OpenOptions::new()
         .create(true)
@@ -101,15 +98,17 @@ pub fn icon_ico(path: &Path) {
             .to_string()
             .replace("\\", "/"),
     );
+
     if resource_script_content.len() != file.write(resource_script_content.as_bytes()).unwrap() {
         panic!("An error occurred while writing the resource file.");
     }
 
     #[cfg(feature = "embed_resource")]
     embed_resource::compile(buildres_file);
-    
+
     #[cfg(not(feature = "embed_resource"))]
     {
+        let resource_file = output_dir.clone() + "/icon.res";
         let args = WINDRES_COMMAND
             .replace("[INPUT]", buildres_file.as_str())
             .replace("[OUTPUT]", resource_file.as_str());
@@ -145,7 +144,7 @@ pub fn icon_png(path: &Path) {
         panic!("Path does not exist");
     }
     let output_dir = var("OUT_DIR").unwrap();
-    let icon_path = output_dir.clone() + "icon.ico";
+    let icon_path = output_dir.clone() + "/icon.ico";
 
     let args = MAGICK_COMMAND_PNG_TO_ICO
         .replace("[INPUT]", path.as_os_str().to_str().unwrap())
@@ -171,7 +170,7 @@ pub fn icon_xxx(path: &Path) {
         panic!("Path does not exist");
     }
     let output_dir = var("OUT_DIR").unwrap();
-    let png_path = output_dir.clone() + "icon.png";
+    let png_path = output_dir.clone() + "/icon.png";
 
     let args = MAGICK_COMMAND_XXX_TO_PNG
         .replace("[INPUT]", path.as_os_str().to_str().unwrap())
