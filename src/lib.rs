@@ -2,7 +2,6 @@
 #![allow(dead_code)]
 
 #[cfg(feature = "build_cfg")]
-#[macro_use]
 extern crate build_cfg;
 #[cfg(feature = "embed_resource")]
 extern crate embed_resource;
@@ -13,7 +12,7 @@ use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
-const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"";
+const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"\n";
 #[cfg(feature = "build_cfg")]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
@@ -71,7 +70,7 @@ pub fn icon(path: &Path) {
             icon_xcf(path);
             return;
         }
-    } //else { panic!("Please specify the icon type!") }
+    }
     icon_xxx(path);
 }
 

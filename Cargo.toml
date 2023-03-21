@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["auto", "ico", "png", "xxx", "xcf", "svg", "placeholder"]
+default = ["auto", "ico", "png", "xxx", "xcf", "svg", "placeholder", "embed_resource"]
 build_cfg=["dep:build_cfg"]
 embed_resource=["dep:embed-resource"]
 ico = []
