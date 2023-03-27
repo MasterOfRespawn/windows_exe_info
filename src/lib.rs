@@ -17,21 +17,15 @@ const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"\n";
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
-const MAGICK_COMMAND_PNG_TO_ICO: &str = "convert [INPUT] -background None
-( -clone 0 -scale 256x256 -extent 256x256 -background None -alpha on )
-( -clone 1 -scale 128x128 -extent 128x128 -background None -alpha on )
-( -clone 2 -scale 64x64 -extent 64x64 -background None -alpha on )
-( -clone 3 -scale 48x48 -extent 48x48 -background None -alpha on )
-( -clone 4 -scale 32x32 -extent 32x32 -background None -alpha on )
-( -clone 5 -scale 16x16 -extent 16x16 -background None -alpha on )
-( -clone 6 -scale 8x8 -extent 8x8 -background None -alpha on )
--alpha on -colors 256 [OUTPUT]";
+const MAGICK_COMMAND_SCALE_PNG: &str = "convert [INPUT] -scale [SCALE]x[SCALE] -extent [SCALE]x[SCALE] -background None -alpha on [OUTPUT][SCALE].png";
 const MAGICK_COMMAND_XXX_TO_PNG: &str =
     "convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
 
-#[cfg(feature = "placeholder")]
+const MAGICK_ICON_SCALES: &[&str] = &["8", "16", "32", "48", "64", "128", "256"];
+
+#[cfg(feature = "icon_placeholder")]
 const PLACEHOLDER: &str = include_str!("../icon.svg");
-#[cfg(feature = "placeholder")]
+#[cfg(feature = "icon_placeholder")]
 pub fn placeholder() {
     let output_dir = var("OUT_DIR").unwrap();
     let png_path = output_dir.clone() + "/icon.svg";
@@ -44,28 +38,28 @@ pub fn placeholder() {
     icon_svg(&std::path::PathBuf::from(&png_path));
 }
 
-#[cfg(feature = "auto")]
+#[cfg(feature = "icon_autodetect")]
 pub fn icon(path: &Path) {
     if !path.exists() {
         panic!("File does not exist");
     }
     if let Some(extension) = path.extension() {
-        #[cfg(feature = "ico")]
+        #[cfg(feature = "icon_ico")]
         if extension == "ico" {
             icon_ico(path);
             return;
         }
-        #[cfg(feature = "png")]
+        #[cfg(feature = "icon_png")]
         if extension == "png" {
             icon_png(path);
             return;
         }
-        #[cfg(feature = "svg")]
+        #[cfg(feature = "icon_svg")]
         if extension == "svg" {
             icon_svg(path);
             return;
         }
-        #[cfg(feature = "xcf")]
+        #[cfg(feature = "icon_xcf")]
         if extension == "xcf" {
             icon_xcf(path);
             return;
@@ -74,7 +68,7 @@ pub fn icon(path: &Path) {
     icon_xxx(path);
 }
 
-#[cfg(feature = "ico")]
+#[cfg(feature = "icon_ico")]
 pub fn icon_ico(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -137,7 +131,7 @@ pub fn icon_ico(path: &Path) {
     }
 }
 
-#[cfg(feature = "png")]
+#[cfg(feature = "icon_png")]
 pub fn icon_png(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -145,15 +139,36 @@ pub fn icon_png(path: &Path) {
     let output_dir = var("OUT_DIR").unwrap();
     let icon_path = output_dir.clone() + "/icon.ico";
 
-    let args = MAGICK_COMMAND_PNG_TO_ICO
+    for scale in MAGICK_ICON_SCALES.iter(){
+        let args = MAGICK_COMMAND_SCALE_PNG
         .replace("[INPUT]", path.as_os_str().to_str().unwrap())
-        .replace("[OUTPUT]", icon_path.as_str())
+        .replace("[SCALE]", scale)
+        .replace("[OUTPUT]", &output_dir.clone())
         .replace("\n", " ");
-    let args = args.split(" ");
 
-    let _ = Command::new("magick")
-        .args(args)
-        .spawn()
+        let args = args.split(" ");
+
+        let _ = Command::new("magick")
+            .args(args)
+            .spawn()
+            .expect("Execution failed")
+            .wait()
+            .expect("Execution failed")
+            .exit_ok()
+            .expect("Command Failed");
+    }
+
+
+    let args = ["convert", path.as_os_str().to_str().unwrap(), icon_path.as_str()];
+
+    let mut cmd = Command::new("magick");
+    let cmd = cmd.arg("convert");
+    
+    for scale in MAGICK_ICON_SCALES.iter(){
+        cmd.arg(output_dir.clone() + scale + ".png");
+    }
+    
+    let _ = cmd.spawn()
         .expect("Execution failed")
         .wait()
         .expect("Execution failed")
@@ -163,7 +178,7 @@ pub fn icon_png(path: &Path) {
     icon_ico(Path::new(&icon_path));
 }
 
-#[cfg(feature = "xxx")]
+#[cfg(feature = "icon_xxx")]
 pub fn icon_xxx(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -188,7 +203,7 @@ pub fn icon_xxx(path: &Path) {
     icon_png(Path::new(&png_path));
 }
 
-#[cfg(feature = "svg")]
+#[cfg(feature = "icon_svg")]
 pub fn icon_svg(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -197,7 +212,7 @@ pub fn icon_svg(path: &Path) {
     icon_xxx(path); // ToDo: Add specific optimized implementation
 }
 
-#[cfg(feature = "xcf")]
+#[cfg(feature = "icon_xcf")]
 pub fn icon_xcf(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");

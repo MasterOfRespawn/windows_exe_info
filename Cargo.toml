@@ -1,19 +1,26 @@
 [package]
-name = "icon_windows"
+name = "windows_exe_info"
 version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["auto", "ico", "png", "xxx", "xcf", "svg", "placeholder", "embed_resource"]
+default = ["icon_autodetect", 
+"icon_ico", 
+"icon_png", 
+"icon_xxx", 
+"icon_xcf", 
+"icon_svg", 
+"icon_placeholder", 
+"embed_resource"]
 build_cfg=["dep:build_cfg"]
 embed_resource=["dep:embed-resource"]
-ico = []
-png = ["ico"]
-xxx = ["png"]
-svg = ["xxx"]
-xcf = ["xxx"]
-placeholder = ["svg"]
-auto = []
+icon_ico = []
+icon_png = ["icon_ico"]
+icon_xxx = ["icon_png"]
+icon_svg = ["icon_xxx"]
+icon_xcf = ["icon_xxx"]
+icon_placeholder = ["icon_svg"]
+icon_autodetect = []
 
 [dependencies]
 build_cfg = { version = "1.1.0", optional = true }
