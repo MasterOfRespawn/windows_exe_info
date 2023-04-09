@@ -1,4 +1,3 @@
-
 #[cfg(feature = "build_cfg")]
 extern crate build_cfg;
 #[cfg(feature = "embed_resource")]
@@ -8,6 +7,7 @@ use std::env::var;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
+#[cfg(any(feature = "icon_png", not(feature = "embed_resource")))]
 use std::process::Command;
 
 const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"\n";
@@ -22,18 +22,19 @@ const MAGICK_COMMAND_XXX_TO_PNG: &str =
 const MAGICK_ICON_SCALES: &[&str] = &["8", "16", "32", "48", "64", "128", "256"];
 
 #[cfg(feature = "icon_placeholder")]
-const PLACEHOLDER: &str = include_str!("../icon.svg");
+const PLACEHOLDER: &[u8] = include_bytes!("../icon.ico");
 #[cfg(feature = "icon_placeholder")]
 pub fn placeholder() {
     let output_dir = var("OUT_DIR").unwrap();
-    let png_path = output_dir.clone() + "/icon.svg";
+    let png_path = output_dir.clone() + "/icon.ico";
     let _ = std::fs::File::options()
         .write(true)
         .create(true)
         .open(&png_path)
         .unwrap()
-        .write(PLACEHOLDER.as_bytes());
-    icon_svg(&std::path::PathBuf::from(&png_path));
+        .write(PLACEHOLDER)
+        .unwrap();
+    icon_ico(&std::path::PathBuf::from(&png_path));
 }
 
 #[cfg(feature = "icon_autodetect")]

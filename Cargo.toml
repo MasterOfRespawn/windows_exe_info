@@ -4,12 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [features]
-default = ["icon_autodetect", 
-"icon_ico", 
-"icon_png", 
-"icon_xxx", 
-"icon_xcf", 
-"icon_svg", 
+default = ["icon_ico", 
 "icon_placeholder", 
 "embed_resource"]
 build_cfg=["dep:build_cfg"]
@@ -19,7 +14,7 @@ icon_png = ["icon_ico"]
 icon_xxx = ["icon_png"]
 icon_svg = ["icon_xxx"]
 icon_xcf = ["icon_xxx"]
-icon_placeholder = ["icon_svg"]
+icon_placeholder = ["icon_ico"]
 icon_autodetect = []
 
 [dependencies]
