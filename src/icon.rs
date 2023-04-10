@@ -11,10 +11,6 @@ use std::path::Path;
 use std::process::Command;
 
 const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"\n";
-#[cfg(feature = "build_cfg")]
-const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
-#[cfg(not(feature = "build_cfg"))]
-const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
 const MAGICK_COMMAND_SCALE_PNG: &str = "convert [INPUT] -scale [SCALE]x[SCALE] -extent [SCALE]x[SCALE] -background None -alpha on [OUTPUT][SCALE].png";
 const MAGICK_COMMAND_XXX_TO_PNG: &str =
     "convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
@@ -95,39 +91,7 @@ pub fn icon_ico(path: &Path) {
         panic!("An error occurred while writing the resource file.");
     }
 
-    #[cfg(feature = "embed_resource")]
-    embed_resource::compile(buildres_file);
-
-    #[cfg(not(feature = "embed_resource"))]
-    {
-        let resource_file = output_dir.clone() + "/icon.res";
-        let args = WINDRES_COMMAND
-            .replace("[INPUT]", buildres_file.as_str())
-            .replace("[OUTPUT]", resource_file.as_str());
-
-        #[cfg(feature = "build_cfg")]
-        let args = if build_cfg!(target_os = "windows") {
-            if build_cfg!(target_pointer_width = "64") {
-                args.replace("[ARCH]", "pe-x86-64")
-            } else {
-                args.replace("[ARCH]", "pe-i386")
-            }
-        } else {
-            panic!("Invalid target operating system");
-        };
-
-        let _ = Command::new("windres")
-            .args(args.split(" "))
-            .spawn()
-            .expect("Execution failed")
-            .wait()
-            .expect("Execution failed")
-            .exit_ok()
-            .expect("Command Failed");
-
-        #[cfg(target_family = "windows")]
-        println!("cargo:rustc-link-arg={resource_file}"); // Tell it to link
-    }
+    super::link::link(buildres_file);
 }
 
 #[cfg(feature = "icon_png")]
@@ -138,12 +102,12 @@ pub fn icon_png(path: &Path) {
     let output_dir = var("OUT_DIR").unwrap();
     let icon_path = output_dir.clone() + "/icon.ico";
 
-    for scale in MAGICK_ICON_SCALES.iter(){
+    for scale in MAGICK_ICON_SCALES.iter() {
         let args = MAGICK_COMMAND_SCALE_PNG
-        .replace("[INPUT]", path.as_os_str().to_str().unwrap())
-        .replace("[SCALE]", scale)
-        .replace("[OUTPUT]", &output_dir.clone())
-        .replace("\n", " ");
+            .replace("[INPUT]", path.as_os_str().to_str().unwrap())
+            .replace("[SCALE]", scale)
+            .replace("[OUTPUT]", &output_dir.clone())
+            .replace("\n", " ");
 
         let args = args.split(" ");
 
@@ -157,19 +121,19 @@ pub fn icon_png(path: &Path) {
             .expect("Command Failed");
     }
 
-
     //let args = ["convert", path.as_os_str().to_str().unwrap(), icon_path.as_str()];
 
     let mut cmd = Command::new("magick");
     let cmd = cmd.arg("convert");
-    
-    for scale in MAGICK_ICON_SCALES.iter(){
+
+    for scale in MAGICK_ICON_SCALES.iter() {
         cmd.arg(output_dir.clone() + scale + ".png");
     }
 
     cmd.arg(icon_path.as_str());
-    
-    let _ = cmd.spawn()
+
+    let _ = cmd
+        .spawn()
         .expect("Execution failed")
         .wait()
         .expect("Execution failed")

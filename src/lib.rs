@@ -2,3 +2,5 @@
 #![allow(dead_code)]
 
 pub mod icon;
+mod link;
+pub mod versioninfo;
