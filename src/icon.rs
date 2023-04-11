@@ -74,6 +74,7 @@ pub fn icon_ico(path: &Path) {
 
     let mut file = OpenOptions::new()
         .create(true)
+        .truncate(true)
         .write(true)
         .open(buildres_file.as_str())
         .unwrap();

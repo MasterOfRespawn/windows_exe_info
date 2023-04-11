@@ -93,6 +93,7 @@ impl VersionInfo {
         let mut file = OpenOptions::new()
             .create(true)
             .write(true)
+            .truncate(true)
             .open(buildres_file.as_str())
             .unwrap();
         let resource_script_content = format!("{}", self);
@@ -334,11 +335,17 @@ impl core::fmt::Display for FileFlagMask {
 }
 
 pub struct FileFlags {
+    /// File contains debugging information or is compiled with debugging features enabled.
     pub debug: bool,
+    /// File has been modified and is not identical to the original shipping file of the same version number.
     pub patched: bool,
+    /// File is a development version, not a commercially released product.
     pub prerelease: bool,
+    /// File was not built using standard release procedures. If this value is given, the StringFileInfo block must contain a PrivateBuild string.
     pub privatebuild: bool,
+    /// I found this in the gcc winver.h file. I have no idea what this does
     pub infoinferred: bool,
+    /// File was built by the original company using standard release procedures but is a variation of the standard file of the same version number. If this value is given, the StringFileInfo block block must contain a SpecialBuild string.
     pub specialbuild: bool,
 }
 impl core::fmt::Display for FileFlags {

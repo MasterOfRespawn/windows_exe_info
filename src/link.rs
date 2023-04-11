@@ -9,7 +9,7 @@ pub fn link(resource_path: String) {
 
     #[cfg(not(feature = "embed_resource"))]
     {
-        let resource_file = output_dir.clone() + "/icon.res";
+        let resource_file = resource_path + ".a";
         let args = WINDRES_COMMAND
             .replace("[INPUT]", resource_path.as_str())
             .replace("[OUTPUT]", resource_file.as_str());
