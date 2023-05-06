@@ -4,3 +4,6 @@
 pub mod icon;
 mod link;
 pub mod versioninfo;
+
+#[cfg(test)]
+mod test;

@@ -32,7 +32,7 @@ impl core::fmt::Display for VersionInfo {
                     + "  BLOCK \""
                     + &fi.lang.to_hex()
                     + &fi.charset.to_hex()
-                    + "\"\n   BEGIN\n";
+                    + "\"\n  BEGIN\n";
                 string =
                     string + "   VALUE \"CompanyName\", " + &fi.company_name.to_string() + "\n";
                 string = string
