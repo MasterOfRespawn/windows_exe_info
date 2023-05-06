@@ -1,7 +1,10 @@
-//use std::collections::HashMap;
+//! Structs for adding version information to an executable
 use std::fs::OpenOptions;
 use std::env::var;
 use std::io::Write;
+/// The main wrapper struct.
+/// Implements custom formatting converting it into an rc script.
+/// Only one versioninfo struct can be used per executable.
 pub struct VersionInfo {
     pub file_version: Version,
     pub product_version: Version,
@@ -106,6 +109,9 @@ impl VersionInfo {
         super::link::link(buildres_file);
     }
 }
+/// Representation of the STRINGFILEINFO block in a versioninfo struct.
+/// Can be used multiple times in the main VERSIONINFO block 
+/// for different languages
 pub struct FileInfo {
     pub lang: Language,
     pub charset: CharacterSet,
@@ -135,6 +141,7 @@ pub struct FileInfo {
     pub special_build: Option<RCString>,
     //pub custom: HashMap<String, RCString>,
 }
+/// The language for the FileInfo struct
 pub enum Language {
     Arabic,                //0x0401
     Polish,                //0x0415
@@ -233,6 +240,7 @@ impl Language {
         }
     }
 }
+/// The character set for the FileInfo struct
 pub enum CharacterSet {
     ASCII7bit,             // 0 	0000
     JapanShiftJISX0208,    // 932 	03A4
@@ -281,22 +289,8 @@ impl CharacterSet {
         }
     }
 }
-/// Wrapper for custom formatting for strings in rc script
+/// Wrapper correct string escaping in rc script
 pub struct RCString(String);
-/*impl RCString {
-    fn stringify(&Self) ->
-}
-impl core::ops::Deref for RCString{
-    type Target = String;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-impl core::ops::DerefMut for RCString {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}*/
 impl From<String> for RCString {
     fn from(value: String) -> Self {
         Self(value)
@@ -313,6 +307,8 @@ impl core::fmt::Display for RCString {
     }
 }
 
+/// wrapper for the actual version, format:
+/// major, minor, patch, build
 pub struct Version(pub u16, pub u16, pub u16, pub u16);
 impl core::fmt::Display for Version {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -320,6 +316,7 @@ impl core::fmt::Display for Version {
     }
 }
 
+/// is always 0x3f
 pub enum FileFlagMask {
     Win16, // = 0x3f, // THERE IS ONLY ONE OPTION
     Custom(u32),
@@ -334,6 +331,7 @@ impl core::fmt::Display for FileFlagMask {
     }
 }
 
+/// special flags descirbing certain attributes (look at flag descriptions)
 pub struct FileFlags {
     /// File contains debugging information or is compiled with debugging features enabled.
     pub debug: bool,
@@ -382,6 +380,8 @@ impl core::fmt::Display for FileFlags {
     }
 }
 
+/// the operating system the application is designed for.
+/// the default in the microsoft documentation is Windows32
 pub enum FileOS {
     Unknown,      // = 0x00000000,
     Dos,          // = 0x00010000,
@@ -433,6 +433,7 @@ impl core::fmt::Display for FileOS {
     }
 }
 
+/// The file type
 pub enum FileType {
     Unknown,               // = 0x00000000,
     App,                   // = 0x00000001,
@@ -471,6 +472,7 @@ impl core::fmt::Display for FileType {
     }
 }
 
+/// file subtype for driver
 pub enum SubTypeDriver {
     Unknown,          // = 0x00000000,
     Printer,          // = 0x00000001,
@@ -513,6 +515,7 @@ impl core::fmt::Display for SubTypeDriver {
     }
 }
 
+/// file subtype for fonts
 pub enum SubTypeFont {
     RasterFont,   // = 0x00000001,
     VectorFont,   // = 0x00000002,

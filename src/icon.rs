@@ -1,3 +1,6 @@
+//! Functions for linking icons to the executable.
+//! File paths are specified relative to the root of the crate.
+
 #[cfg(feature = "build_cfg")]
 extern crate build_cfg;
 #[cfg(feature = "embed_resource")]
@@ -20,6 +23,7 @@ const MAGICK_ICON_SCALES: &[&str] = &["8", "16", "32", "48", "64", "128", "256"]
 #[cfg(feature = "icon_placeholder")]
 const PLACEHOLDER: &[u8] = include_bytes!("../icon.ico");
 #[cfg(feature = "icon_placeholder")]
+/// add a todo icon to the executable
 pub fn placeholder() {
     let output_dir = var("OUT_DIR").unwrap();
     let png_path = output_dir.clone() + "/icon.ico";
@@ -34,6 +38,7 @@ pub fn placeholder() {
 }
 
 #[cfg(feature = "icon_autodetect")]
+/// autodetect icon format based on file ending
 pub fn icon(path: &Path) {
     if !path.exists() {
         panic!("File does not exist");
@@ -64,6 +69,7 @@ pub fn icon(path: &Path) {
 }
 
 #[cfg(feature = "icon_ico")]
+/// link icon in `ico` format to executable
 pub fn icon_ico(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -96,6 +102,7 @@ pub fn icon_ico(path: &Path) {
 }
 
 #[cfg(feature = "icon_png")]
+/// convert and scale `png` format to `ico` using imagemagick
 pub fn icon_png(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -143,6 +150,7 @@ pub fn icon_png(path: &Path) {
 }
 
 #[cfg(feature = "icon_xxx")]
+/// convert any format to `png` using imagemagick and link it
 pub fn icon_xxx(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -167,6 +175,8 @@ pub fn icon_xxx(path: &Path) {
 }
 
 #[cfg(feature = "icon_svg")]
+/// placeholder method for converting `svg` to `ico` using inkscape.
+/// currently defaulting to the generic method using imagemagick
 pub fn icon_svg(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
@@ -176,6 +186,8 @@ pub fn icon_svg(path: &Path) {
 }
 
 #[cfg(feature = "icon_xcf")]
+/// placeholder method for converting `xcf` to `ico` using gimp.
+/// currently defaulting to the generic method using imagemagick
 pub fn icon_xcf(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
