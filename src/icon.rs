@@ -112,14 +112,13 @@ pub fn icon_png(path: &Path) {
 
         let args = args.split(" ");
 
-        let _ = Command::new("magick")
+        assert!(Command::new("magick")
             .args(args)
             .spawn()
             .expect("Execution failed")
             .wait()
             .expect("Execution failed")
-            .exit_ok()
-            .expect("Command Failed");
+            .success());
     }
 
     //let args = ["convert", path.as_os_str().to_str().unwrap(), icon_path.as_str()];
@@ -133,13 +132,12 @@ pub fn icon_png(path: &Path) {
 
     cmd.arg(icon_path.as_str());
 
-    let _ = cmd
+    assert!(cmd
         .spawn()
         .expect("Execution failed")
         .wait()
         .expect("Execution failed")
-        .exit_ok()
-        .expect("Command Failed");
+        .success());
 
     icon_ico(Path::new(&icon_path));
 }
@@ -157,14 +155,13 @@ pub fn icon_xxx(path: &Path) {
         .replace("[OUTPUT]", png_path.as_str());
     let args = args.split(" ");
 
-    let _ = Command::new("magick")
+    assert!(Command::new("magick")
         .args(args)
         .spawn()
         .expect("Execution failed")
         .wait()
         .expect("Execution failed")
-        .exit_ok()
-        .expect("Command Failed");
+        .success());
 
     icon_png(Path::new(&png_path));
 }

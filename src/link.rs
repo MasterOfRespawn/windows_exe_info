@@ -25,14 +25,13 @@ pub fn link(resource_path: String) {
             panic!("Invalid target operating system");
         };
 
-        let _ = Command::new("windres")
+        assert!(Command::new("windres")
             .args(args.split(" "))
             .spawn()
             .expect("Execution failed")
             .wait()
             .expect("Execution failed")
-            .exit_ok()
-            .expect("Command Failed");
+            .success());
 
         #[cfg(target_family = "windows")]
         println!("cargo:rustc-link-arg={resource_file}"); // Tell it to link

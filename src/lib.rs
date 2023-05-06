@@ -1,8 +1,8 @@
-#![feature(exit_status_error)]
+//#![feature(exit_status_error)]
 #![allow(dead_code)]
 
-pub mod icon;
 mod link;
+pub mod icon;
 pub mod versioninfo;
 
 #[cfg(test)]
