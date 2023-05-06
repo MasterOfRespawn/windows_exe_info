@@ -2,26 +2,24 @@
 
 A [`Cargo` build script](http://doc.crates.io/build-script.html) library to
 handle inclusion of Windows icons and version information without the use of
-external `.rc` files
+external `.rc` files.
 
 Inspired by and using [embed_resource](https://docs.rs/embed-resource).
-Use embed_resource when the `windres` command is not on PATH
+Use embed_resource when the `windres` command is not on PATH.
 
-Optional use of build_cfg 
-
-Generic image format conversion is done calling 
+Generic image format conversion is done calling
 [imagemagick](https://imagemagick.org). Imagemagick needs to be in PATH for
 the conversion functions to work. If imagemagick is not found, the build
 script will fail.
 
-The only icon format capable of being used without imagemagick is `.ico`
+The only icon format capable of being used without imagemagick is `.ico`.
 
 **INFO:** At the moment only one icon and versioninfo struct can be linked.
 
 This crate only works on windows as resource scripts are a windows thing.
 Linking for web will fail (I have not yet checked for linux or macos).
 Use [build_cfg](https://docs.rs/build_cfg) for checking the target.
-Build_cfg is also used for cross architecture compilation support
+Build_cfg is also used for cross architecture compilation support.
 
 ## Features
 - build_cfg: use [build_cfg](https://docs.rs/build_cfg) to use the correct target architecture
