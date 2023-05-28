@@ -2,6 +2,9 @@
 use std::fs::OpenOptions;
 use std::env::var;
 use std::io::Write;
+
+pub(crate) static mut HAS_LINKED_VERSIONINFO: bool = false;
+
 /// The main wrapper struct.
 /// Implements custom formatting converting it into an rc script.
 /// Only one versioninfo struct can be used per executable.
@@ -90,7 +93,11 @@ impl core::fmt::Display for VersionInfo {
 }
 impl VersionInfo {
     /// Writes the content of the struct into a file and tries to compile and link it
-    pub fn link(&self) {
+    /// panics if it is invoked more than once
+    pub fn link(&self) -> Result<(), &str> {
+        if unsafe{HAS_LINKED_VERSIONINFO} == true {
+            return Err("Only one versioninfo can be linked");
+        }
         let output_dir = var("OUT_DIR").unwrap();
         let buildres_file = output_dir.clone() + "/info.rc";
         let mut file = OpenOptions::new()
@@ -107,6 +114,8 @@ impl VersionInfo {
         }
 
         super::link::link(buildres_file);
+        unsafe{HAS_LINKED_VERSIONINFO = true};
+        return Ok(())
     }
 }
 /// Representation of the STRINGFILEINFO block in a versioninfo struct.
