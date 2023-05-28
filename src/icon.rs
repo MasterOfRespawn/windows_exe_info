@@ -1,5 +1,6 @@
 //! Functions for linking icons to the executable.
 //! File paths are specified relative to the root of the crate.
+//! The first linked icon will be used by windows as the executable's icon
 
 #[cfg(feature = "build_cfg")]
 extern crate build_cfg;
