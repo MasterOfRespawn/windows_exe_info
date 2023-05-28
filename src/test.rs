@@ -39,7 +39,10 @@ END
 #[cfg(feature="versioninfo")]
 #[test]
 fn format_version_info(){
-    assert!(!unsafe{HAS_LINKED_VERSIONINFO});
+    // initialization
+    let mut temp_file = std::env::temp_dir();
+    std::env::set_var("OUT_DIR", temp_file.clone());
+
     let rc = VersionInfo{
         file_version: Version(0,1,2,3),
         product_version: Version(4,5,6,7),
@@ -71,17 +74,45 @@ fn format_version_info(){
             special_build:Some("Made for testing, who would have guessed".into()),
         },],
     };
+    // check formatting
     let formatted = format!("{}", rc);
     assert_eq!(formatted, FORMATTED_VERSIONINFO.to_string());
+
+    // check double linking prevention
+    assert!(!unsafe{HAS_LINKED_VERSIONINFO});
     rc.link().unwrap();
     assert!(unsafe{HAS_LINKED_VERSIONINFO});
     assert!(rc.link().is_err());
+
+    // cleanup
+    
+    temp_file.push(format!("info.rc"));
+    assert!(temp_file.exists());
+    std::fs::remove_file(&temp_file).unwrap();
+    assert!(temp_file.pop());
+
+    #[cfg(feature="embed_resource")]
+    {
+        temp_file.push(format!("libinfo.a"));
+        assert!(temp_file.exists());
+        std::fs::remove_file(&temp_file).unwrap();
+        assert!(temp_file.pop());
+    }
+    #[cfg(not(feature="embed_resource"))]
+    {
+        temp_file.push(format!("info.rc.a"));
+        assert!(temp_file.exists());
+        std::fs::remove_file(&temp_file).unwrap();
+        assert!(temp_file.pop());
+    }
 }
 
 use crate::icon::*;
 
+#[cfg(feature="icon_placeholder")]
 #[test]
 fn multi_icon_id(){
+    // initialization
     const ITERATIONS: u16 = 4;
 
     let mut temp_file = std::env::temp_dir();
@@ -89,11 +120,13 @@ fn multi_icon_id(){
     std::env::set_var("TARGET", "pe-x86-64");
 
     for i in 0..ITERATIONS {
+        // check
         placeholder();
         temp_file.push(format!("icon{i}.rc"));
         assert!(temp_file.exists());
         std::fs::remove_file(&temp_file).unwrap();
         assert!(temp_file.pop());
+        // cleanup
         #[cfg(feature="embed_resource")]
         {
             temp_file.push(format!("libicon{i}.a"));
@@ -110,9 +143,11 @@ fn multi_icon_id(){
         }
     }
 
+    // cleanup (2)
     temp_file.push(format!("icon.ico"));
     std::fs::remove_file(&temp_file).unwrap();
 
+    // check (2)
     unsafe{
         assert_eq!(crate::icon::CURRENT_ICON_ID, ITERATIONS);
     }
