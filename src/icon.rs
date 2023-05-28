@@ -10,15 +10,17 @@ use std::env::var;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::Path;
-#[cfg(any(feature = "icon_png", not(feature = "embed_resource")))]
+#[cfg(feature = "icon_png")]
 use std::process::Command;
 
-const WINDRES_RESOURCE_SCRIPT: &str = "id ICON \"[PATH]\"\n";
+const WINDRES_RESOURCE_SCRIPT: &str = "[ID] ICON \"[PATH]\"\n";
 const MAGICK_COMMAND_SCALE_PNG: &str = "convert [INPUT] -scale [SCALE]x[SCALE] -extent [SCALE]x[SCALE] -background None -alpha on [OUTPUT][SCALE].png";
 const MAGICK_COMMAND_XXX_TO_PNG: &str =
     "convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
 
 const MAGICK_ICON_SCALES: &[&str] = &["8", "16", "32", "48", "64", "128", "256"];
+
+pub(crate) static mut CURRENT_ICON_ID: u16 = 0;
 
 #[cfg(feature = "icon_placeholder")]
 const PLACEHOLDER: &[u8] = include_bytes!("../icon.ico");
@@ -76,7 +78,7 @@ pub fn icon_ico(path: &Path) {
     }
 
     let output_dir = var("OUT_DIR").unwrap();
-    let buildres_file = output_dir.clone() + "/icon.rc";
+    let buildres_file = output_dir.clone() + &unsafe{format!("/icon{}.rc", CURRENT_ICON_ID)};
 
     let mut file = OpenOptions::new()
         .create(true)
@@ -92,7 +94,10 @@ pub fn icon_ico(path: &Path) {
             .unwrap()
             .to_string()
             .replace("\\", "/"),
-    );
+    ).replace("[ID]", &unsafe{format!("icon{}", CURRENT_ICON_ID)});
+    unsafe{
+        CURRENT_ICON_ID += 1;
+    }
 
     if resource_script_content.len() != file.write(resource_script_content.as_bytes()).unwrap() {
         panic!("An error occurred while writing the resource file.");
