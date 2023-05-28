@@ -1,11 +1,12 @@
 [package]
 name = "windows_exe_info"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 license = "MIT"
 description = "A cargo build script library for adding file information to windows executables"
 repository = "https://github.com/MasterOfRespawn/windows_exe_info"
 readme = "readme.md"
+keywords = ["cargo", "build", "windows", "resource", "manifest"]
 
 [features]
 default = ["icon_ico", 
