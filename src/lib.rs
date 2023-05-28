@@ -29,6 +29,7 @@
 //! - icon_xcf: xcf specific format conversion (currently only redirecting to the generic function)
 //! - icon_placeholder: add a placeholder todo icon
 //! - icon_autodetect: autodetect icon format and use specific conversion function (currently only redirecting to the generic function)
+//! - versioninfo: allow adding windows version information to the executable
 
 mod link;
 pub mod icon;
