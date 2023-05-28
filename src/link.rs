@@ -2,6 +2,8 @@
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
+#[cfg(not(feature = "embed_resource"))]
+use std::process::Command;
 
 pub fn link(resource_path: String) {
     #[cfg(feature = "embed_resource")]
@@ -9,7 +11,7 @@ pub fn link(resource_path: String) {
 
     #[cfg(not(feature = "embed_resource"))]
     {
-        let resource_file = resource_path + ".a";
+        let resource_file = resource_path.clone() + ".a";
         let args = WINDRES_COMMAND
             .replace("[INPUT]", resource_path.as_str())
             .replace("[OUTPUT]", resource_file.as_str());
