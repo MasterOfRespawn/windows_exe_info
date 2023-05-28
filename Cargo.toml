@@ -10,7 +10,8 @@ readme = "readme.md"
 [features]
 default = ["icon_ico", 
 "icon_placeholder", 
-"embed_resource"]
+"embed_resource",
+"versioninfo"]
 build_cfg=["dep:build_cfg"]
 embed_resource=["dep:embed-resource"]
 icon_ico = []
@@ -20,6 +21,7 @@ icon_svg = ["icon_xxx"]
 icon_xcf = ["icon_xxx"]
 icon_placeholder = ["icon_ico"]
 icon_autodetect = []
+versioninfo = []
 
 [dependencies]
 build_cfg = { version = "1.1.0", optional = true }

@@ -32,6 +32,7 @@
 
 mod link;
 pub mod icon;
+#[cfg(feature="versioninfo")]
 pub mod versioninfo;
 
 #[cfg(test)]
