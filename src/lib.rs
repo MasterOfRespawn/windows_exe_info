@@ -25,8 +25,6 @@
 //! - icon_ico: basic icon linking
 //! - icon_png: png format support using imagemagick
 //! - icon_xxx: generic format support using imagemagick
-//! - icon_svg: svg specific format conversion (currently only redirecting to the generic function)
-//! - icon_xcf: xcf specific format conversion (currently only redirecting to the generic function)
 //! - icon_placeholder: add a placeholder todo icon
 //! - icon_autodetect: autodetect icon format and use specific conversion function (currently only redirecting to the generic function)
 //! - manifest: allow embedding application manifest files in the executable
