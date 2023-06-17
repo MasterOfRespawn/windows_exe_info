@@ -79,7 +79,7 @@ pub fn icon_ico(path: &Path) {
     }
 
     let output_dir = var("OUT_DIR").unwrap();
-    let buildres_file = output_dir.clone() + &unsafe{format!("/icon{}.rc", CURRENT_ICON_ID)};
+    let buildres_file = output_dir.clone() + &unsafe { format!("/icon{}.rc", CURRENT_ICON_ID) };
 
     let mut file = OpenOptions::new()
         .create(true)
@@ -87,16 +87,18 @@ pub fn icon_ico(path: &Path) {
         .write(true)
         .open(buildres_file.as_str())
         .unwrap();
-    let resource_script_content = ICON_RESOURCE_SCRIPT.replace(
-        "[PATH]",
-        &path
-            .as_os_str()
-            .to_str()
-            .unwrap()
-            .to_string()
-            .replace("\\", "/"),
-    ).replace("[ID]", &unsafe{format!("icon{}", CURRENT_ICON_ID)});
-    unsafe{
+    let resource_script_content = ICON_RESOURCE_SCRIPT
+        .replace(
+            "[PATH]",
+            &path
+                .as_os_str()
+                .to_str()
+                .unwrap()
+                .to_string()
+                .replace("\\", "/"),
+        )
+        .replace("[ID]", &unsafe { format!("icon{}", CURRENT_ICON_ID) });
+    unsafe {
         CURRENT_ICON_ID += 1;
     }
 

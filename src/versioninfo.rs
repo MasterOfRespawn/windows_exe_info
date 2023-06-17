@@ -1,6 +1,6 @@
 //! Structs for adding version information to an executable
-use std::fs::OpenOptions;
 use std::env::var;
+use std::fs::OpenOptions;
 use std::io::Write;
 
 pub(crate) static mut HAS_LINKED_VERSIONINFO: bool = false;
@@ -92,7 +92,7 @@ impl VersionInfo {
     /// Writes the content of the struct into a file and tries to compile and link it
     /// panics if it is invoked more than once
     pub fn link(&self) -> Result<(), &str> {
-        if unsafe{HAS_LINKED_VERSIONINFO} == true {
+        if unsafe { HAS_LINKED_VERSIONINFO } == true {
             return Err("Only one versioninfo can be linked");
         }
         let output_dir = var("OUT_DIR").unwrap();
@@ -111,12 +111,12 @@ impl VersionInfo {
         }
 
         super::link::link(buildres_file);
-        unsafe{HAS_LINKED_VERSIONINFO = true};
-        return Ok(())
+        unsafe { HAS_LINKED_VERSIONINFO = true };
+        return Ok(());
     }
 }
 /// Representation of the STRINGFILEINFO block in a versioninfo struct.
-/// Can be used multiple times in the main VERSIONINFO block 
+/// Can be used multiple times in the main VERSIONINFO block
 /// for different languages
 pub struct FileInfo {
     pub lang: Language,

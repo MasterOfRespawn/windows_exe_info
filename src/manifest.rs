@@ -1,7 +1,7 @@
-use std::path::Path;
 use std::env::var;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::path::Path;
 
 const MANIFEST_RESOURCE_SCRIPT: &str = "#define RT_MANIFEST 24
 [ID] RT_MANIFEST \"[PATH]\"\n";
@@ -14,7 +14,8 @@ pub fn manifest(path: &Path) {
     }
 
     let output_dir = var("OUT_DIR").unwrap();
-    let buildres_file = output_dir.clone() + &unsafe{format!("/manifest{}.rc", CURRENT_MANIFEST_ID)};
+    let buildres_file =
+        output_dir.clone() + &unsafe { format!("/manifest{}.rc", CURRENT_MANIFEST_ID) };
 
     let mut file = OpenOptions::new()
         .create(true)
@@ -22,16 +23,20 @@ pub fn manifest(path: &Path) {
         .write(true)
         .open(buildres_file.as_str())
         .unwrap();
-    let resource_script_content = MANIFEST_RESOURCE_SCRIPT.replace(
-        "[PATH]",
-        &path
-            .as_os_str()
-            .to_str()
-            .unwrap()
-            .to_string()
-            .replace("\\", "/"),
-    ).replace("[ID]", &unsafe{format!("manifest{}", CURRENT_MANIFEST_ID)});
-    unsafe{
+    let resource_script_content = MANIFEST_RESOURCE_SCRIPT
+        .replace(
+            "[PATH]",
+            &path
+                .as_os_str()
+                .to_str()
+                .unwrap()
+                .to_string()
+                .replace("\\", "/"),
+        )
+        .replace("[ID]", &unsafe {
+            format!("manifest{}", CURRENT_MANIFEST_ID)
+        });
+    unsafe {
         CURRENT_MANIFEST_ID += 1;
     }
 
