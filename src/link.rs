@@ -7,7 +7,7 @@ use std::process::Command;
 
 pub fn link(resource_path: String) {
     #[cfg(feature = "embed_resource")]
-    embed_resource::compile(resource_path);
+    embed_resource::compile(resource_path, embed_resource::NONE);
 
     #[cfg(not(feature = "embed_resource"))]
     {
