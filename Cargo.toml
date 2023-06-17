@@ -1,6 +1,6 @@
 [package]
 name = "windows_exe_info"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 description = "A cargo build script library for adding file information to windows executables"
@@ -12,7 +12,10 @@ keywords = ["cargo", "build", "windows", "resource", "manifest"]
 default = ["icon_ico", 
 "icon_placeholder", 
 "embed_resource",
-"versioninfo"]
+"manifest",
+"versioninfo",
+"icon_autodetect",
+"icon_xxx"]
 build_cfg=["dep:build_cfg"]
 embed_resource=["dep:embed-resource"]
 icon_ico = []
@@ -22,6 +25,7 @@ icon_svg = ["icon_xxx"]
 icon_xcf = ["icon_xxx"]
 icon_placeholder = ["icon_ico"]
 icon_autodetect = []
+manifest = []
 versioninfo = []
 
 [dependencies]

@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
 //! A [`Cargo` build script](http://doc.crates.io/build-script.html) library to
-//! handle inclusion of Windows icons and version information without the use of
-//! external `.rc` files.
+//! handle inclusion of Windows icons, version information and application 
+//! manifests without the use of external `.rc` files.
 //! 
 //! Inspired by and using [embed_resource](https://docs.rs/embed-resource).
 //! Use embed_resource when the `windres` command is not on PATH.
@@ -29,10 +29,14 @@
 //! - icon_xcf: xcf specific format conversion (currently only redirecting to the generic function)
 //! - icon_placeholder: add a placeholder todo icon
 //! - icon_autodetect: autodetect icon format and use specific conversion function (currently only redirecting to the generic function)
+//! - manifest: allow embedding application manifest files in the executable
 //! - versioninfo: allow adding windows version information to the executable
 
 mod link;
 pub mod icon;
+#[cfg(feature="manifest")]
+mod manifest;
+pub use manifest::manifest;
 #[cfg(feature="versioninfo")]
 pub mod versioninfo;
 

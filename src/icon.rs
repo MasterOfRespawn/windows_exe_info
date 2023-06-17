@@ -14,7 +14,7 @@ use std::path::Path;
 #[cfg(feature = "icon_png")]
 use std::process::Command;
 
-const WINDRES_RESOURCE_SCRIPT: &str = "[ID] ICON \"[PATH]\"\n";
+const ICON_RESOURCE_SCRIPT: &str = "[ID] ICON \"[PATH]\"\n";
 const MAGICK_COMMAND_SCALE_PNG: &str = "convert [INPUT] -scale [SCALE]x[SCALE] -extent [SCALE]x[SCALE] -background None -alpha on [OUTPUT][SCALE].png";
 const MAGICK_COMMAND_XXX_TO_PNG: &str =
     "convert [INPUT] -background None -alpha on -scale 256x256 -layers merge [OUTPUT]";
@@ -87,7 +87,7 @@ pub fn icon_ico(path: &Path) {
         .write(true)
         .open(buildres_file.as_str())
         .unwrap();
-    let resource_script_content = WINDRES_RESOURCE_SCRIPT.replace(
+    let resource_script_content = ICON_RESOURCE_SCRIPT.replace(
         "[PATH]",
         &path
             .as_os_str()
