@@ -1,8 +1,8 @@
 # windows exe info
 
 A [`Cargo` build script](http://doc.crates.io/build-script.html) library to
-handle inclusion of Windows icons and version information without the use of
-external `.rc` files.
+handle inclusion of Windows icons, version information and application
+manifests without the use of external `.rc` files.
 
 Inspired by and using [embed_resource](https://docs.rs/embed-resource).
 Use embed_resource when the `windres` command is not on PATH.
@@ -25,8 +25,7 @@ Build_cfg is required for cross architecture compilation.
 - icon_ico: basic icon linking
 - icon_png: png format support using imagemagick
 - icon_xxx: generic format support using imagemagick
-- icon_svg: svg specific format conversion (currently only redirecting to the generic function)
-- icon_xcf: xcf specific format conversion (currently only redirecting to the generic function)
 - icon_placeholder: add a placeholder todo icon
 - icon_autodetect: autodetect icon format and use specific conversion function (currently only redirecting to the generic function)
+- manifest: allow embedding application manifest files in the executable
 - versioninfo: allow adding windows version information to the executable
