@@ -74,9 +74,6 @@ impl core::fmt::Display for VersionInfo {
                 if let Some(t) = &fi.special_build {
                     string = string + "   VALUE \"SpecialBuild\", " + &t.to_string() + "\n";
                 }
-                /*for (key, value) in fi.custom.iter() {
-                    string = string + "   VALUE \"" + key + "\", " + &value.to_string() + "\n";
-                }*/
                 string = string + "  END\n";
             }
             string = string + " END\n\n";
