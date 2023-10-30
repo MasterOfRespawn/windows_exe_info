@@ -114,6 +114,84 @@ impl VersionInfo {
         unsafe { HAS_LINKED_VERSIONINFO = true };
         return Ok(());
     }
+    /// creates the VersionInfo struct from cargo environment variables. 
+    /// sets the FileInfo Language to English and without the optional fields 
+    /// `comment`, `company_name`, `legal_copyright` and `legal_trademarks`
+    pub fn from_cargo_env() -> Self {
+        Self::from_cargo_env_ex(None, None, None, None)
+    }
+    /// creates the VersionInfo struct from cargo environment variables. 
+    /// sets the FileInfo Language to English including the optional fields 
+    /// `comment`, `company_name`, `legal_copyright` and `legal_trademarks`
+    /// according to user input
+    pub fn from_cargo_env_ex(comment: Option<&str>, company_name: Option<&str>, legal_copyright: Option<&str>, legal_trademarks: Option<&str>) -> Self {
+        let comment = if let Some(comment) = comment {
+            Some(comment.into())
+        } else {
+            None
+        };
+        let company_name = if let Some(company_name) = company_name {
+            company_name.into()
+        } else {
+            "".into()
+        };
+        let legal_copyright = if let Some(legal_copyright) = legal_copyright {
+            Some(legal_copyright.into())
+        } else {
+            None
+        };
+        let legal_trademarks = if let Some(legal_trademarks) = legal_trademarks {
+            Some(legal_trademarks.into())
+        } else {
+            None
+        };
+        let version = Version(
+            env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap_or(0),
+            env!("CARGO_PKG_VERSION_MINOR").parse().unwrap_or(0),
+            env!("CARGO_PKG_VERSION_PATCH").parse().unwrap_or(0),
+            env!("CARGO_PKG_VERSION_PRE").parse().unwrap_or(0),
+        );
+        Self {
+            file_version: version.clone(),
+            product_version: version,
+            file_flag_mask: FileFlagMask::Win16,
+            file_flags: FileFlags {
+                debug: cfg!(debug_assertions),
+                patched: false,
+                prerelease: false,
+                privatebuild: false,
+                infoinferred: false,
+                specialbuild: false,
+            },
+            file_os: FileOS::Windows32,
+            file_type: FileType::App,
+            file_info: vec![FileInfo {
+                lang: Language::USEnglish,
+                charset: CharacterSet::Multilingual,
+                comment,
+                company_name,
+                file_description: env!("CARGO_PKG_DESCRIPTION").into(),
+                file_version: env!("CARGO_PKG_VERSION").into(),
+                internal_name: std::env::var("CARGO_BIN_NAME")
+                    .unwrap_or("".to_owned())
+                    .into(),
+                legal_copyright,
+                legal_trademarks,
+                original_filename: (std::env::var("CARGO_BIN_NAME").unwrap_or("".to_owned())
+                    + ".exe")
+                    .into(),
+                product_name: env!("CARGO_CRATE_NAME").into(),
+                product_version: env!("CARGO_PKG_VERSION").into(),
+                private_build: None,
+                special_build: None,
+            }],
+        }
+    }
+}
+impl Default for VersionInfo {
+    fn default() -> Self {
+        Self::from_cargo_env()
+    }
 }
 /// Representation of the STRINGFILEINFO block in a versioninfo struct.
 /// Can be used multiple times in the main VERSIONINFO block
@@ -315,6 +393,7 @@ impl core::fmt::Display for RCString {
 
 /// wrapper for the actual version, format:
 /// major, minor, patch, build
+#[derive(Clone)]
 pub struct Version(pub u16, pub u16, pub u16, pub u16);
 impl core::fmt::Display for Version {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
