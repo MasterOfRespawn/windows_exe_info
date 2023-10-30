@@ -20,7 +20,7 @@ Use [build_cfg](https://docs.rs/build_cfg) for checking the target being windows
 Build_cfg is required for cross architecture compilation.
 
 ## Features
-- build_cfg: use [build_cfg](https://docs.rs/build_cfg) to use the correct target architecture
+- build_cfg: use [build_cfg](https://docs.rs/build_cfg) to target the correct architecture
 - embed_resource: use [embed_resource](https://docs.rs/embed-resource) crate for selecting `.rc` compiler
 - icon_ico: basic icon linking
 - icon_png: png format support using imagemagick
