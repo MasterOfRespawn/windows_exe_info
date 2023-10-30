@@ -114,17 +114,22 @@ impl VersionInfo {
         unsafe { HAS_LINKED_VERSIONINFO = true };
         return Ok(());
     }
-    /// creates the VersionInfo struct from cargo environment variables. 
-    /// sets the FileInfo Language to English and without the optional fields 
+    /// creates the VersionInfo struct from cargo environment variables.
+    /// sets the FileInfo Language to English and without the optional fields
     /// `comment`, `company_name`, `legal_copyright` and `legal_trademarks`
     pub fn from_cargo_env() -> Self {
         Self::from_cargo_env_ex(None, None, None, None)
     }
-    /// creates the VersionInfo struct from cargo environment variables. 
-    /// sets the FileInfo Language to English including the optional fields 
+    /// creates the VersionInfo struct from cargo environment variables.
+    /// sets the FileInfo Language to English including the optional fields
     /// `comment`, `company_name`, `legal_copyright` and `legal_trademarks`
     /// according to user input
-    pub fn from_cargo_env_ex(comment: Option<&str>, company_name: Option<&str>, legal_copyright: Option<&str>, legal_trademarks: Option<&str>) -> Self {
+    pub fn from_cargo_env_ex(
+        comment: Option<&str>,
+        company_name: Option<&str>,
+        legal_copyright: Option<&str>,
+        legal_trademarks: Option<&str>,
+    ) -> Self {
         let comment = if let Some(comment) = comment {
             Some(comment.into())
         } else {
@@ -172,14 +177,10 @@ impl VersionInfo {
                 company_name,
                 file_description: env!("CARGO_PKG_DESCRIPTION").into(),
                 file_version: env!("CARGO_PKG_VERSION").into(),
-                internal_name: std::env::var("CARGO_BIN_NAME")
-                    .unwrap_or("".to_owned())
-                    .into(),
+                internal_name: env!("CARGO_CRATE_NAME").into(),
                 legal_copyright,
                 legal_trademarks,
-                original_filename: (std::env::var("CARGO_BIN_NAME").unwrap_or("".to_owned())
-                    + ".exe")
-                    .into(),
+                original_filename: (env!("CARGO_CRATE_NAME").to_owned() + ".exe").into(),
                 product_name: env!("CARGO_CRATE_NAME").into(),
                 product_version: env!("CARGO_PKG_VERSION").into(),
                 private_build: None,
