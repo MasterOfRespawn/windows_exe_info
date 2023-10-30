@@ -2,12 +2,12 @@
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
+#[cfg(all(feature = "build_cfg", not(test)))]
+use build_cfg::build_cfg;
+#[cfg(all(feature = "build_cfg", test))]
+use std::cfg as build_cfg;
 #[cfg(not(feature = "embed_resource"))]
 use std::process::Command;
-#[cfg(all(feature="build_cfg", not(test)))]
-use build_cfg::build_cfg;
-#[cfg(all(feature="build_cfg", test))]
-use std::cfg as build_cfg;
 
 pub fn link(resource_path: String) {
     #[cfg(feature = "embed_resource")]
