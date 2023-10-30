@@ -9,8 +9,8 @@ readme = "readme.md"
 keywords = ["cargo", "build", "windows", "resource", "manifest"]
 
 [features]
-default = ["icon_ico", 
-"icon_placeholder", 
+default = ["icon_ico",
+"icon_placeholder",
 "embed_resource",
 "manifest",
 "versioninfo",
@@ -21,8 +21,6 @@ embed_resource=["dep:embed-resource"]
 icon_ico = []
 icon_png = ["icon_ico"]
 icon_xxx = ["icon_png"]
-icon_svg = ["icon_xxx"]
-icon_xcf = ["icon_xxx"]
 icon_placeholder = ["icon_ico"]
 icon_autodetect = []
 manifest = []

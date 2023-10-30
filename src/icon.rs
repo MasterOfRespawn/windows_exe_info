@@ -57,16 +57,6 @@ pub fn icon(path: &Path) {
             icon_png(path);
             return;
         }
-        #[cfg(feature = "icon_svg")]
-        if extension == "svg" {
-            icon_svg(path);
-            return;
-        }
-        #[cfg(feature = "icon_xcf")]
-        if extension == "xcf" {
-            icon_xcf(path);
-            return;
-        }
     }
     icon_xxx(path);
 }
@@ -180,26 +170,4 @@ pub fn icon_xxx(path: &Path) {
         .success());
 
     icon_png(Path::new(&png_path));
-}
-
-#[cfg(feature = "icon_svg")]
-/// placeholder method for converting `svg` to `ico` using inkscape.
-/// currently defaulting to the generic method using imagemagick
-pub fn icon_svg(path: &Path) {
-    if !path.exists() {
-        panic!("Path does not exist");
-    }
-
-    icon_xxx(path); // ToDo: Add specific optimized implementation
-}
-
-#[cfg(feature = "icon_xcf")]
-/// placeholder method for converting `xcf` to `ico` using gimp.
-/// currently defaulting to the generic method using imagemagick
-pub fn icon_xcf(path: &Path) {
-    if !path.exists() {
-        panic!("Path does not exist");
-    }
-
-    icon_xxx(path); // ToDo: Add specific optimized implementation
 }
