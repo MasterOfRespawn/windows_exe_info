@@ -58,6 +58,7 @@ pub fn icon(path: &Path) {
             return;
         }
     }
+    #[cfg(feature = "icon_xxx")]
     icon_xxx(path);
 }
 
