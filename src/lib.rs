@@ -30,10 +30,12 @@
 //! - manifest: allow embedding application manifest files in the executable
 //! - versioninfo: allow adding windows version information to the executable
 
+#[cfg(feature = "icon_ico")]
 pub mod icon;
 mod link;
 #[cfg(feature = "manifest")]
 mod manifest;
+#[cfg(feature = "manifest")]
 pub use manifest::manifest;
 #[cfg(feature = "versioninfo")]
 pub mod versioninfo;
