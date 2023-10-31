@@ -151,17 +151,17 @@ impl VersionInfo {
             None
         };
         let version = Version(
-            env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap_or(0),
-            env!("CARGO_PKG_VERSION_MINOR").parse().unwrap_or(0),
-            env!("CARGO_PKG_VERSION_PATCH").parse().unwrap_or(0),
-            env!("CARGO_PKG_VERSION_PRE").parse().unwrap_or(0),
+            std::env::var("CARGO_PKG_VERSION_MAJOR").unwrap_or("".to_owned()).parse().unwrap_or(0),
+            std::env::var("CARGO_PKG_VERSION_MINOR").unwrap_or("".to_owned()).parse().unwrap_or(0),
+            std::env::var("CARGO_PKG_VERSION_PATCH").unwrap_or("".to_owned()).parse().unwrap_or(0),
+            std::env::var("CARGO_PKG_VERSION_PRE").unwrap_or("".to_owned()).parse().unwrap_or(0),
         );
         Self {
             file_version: version.clone(),
             product_version: version,
             file_flag_mask: FileFlagMask::Win16,
             file_flags: FileFlags {
-                debug: cfg!(debug_assertions),
+                debug: std::env::var("PROFILE").unwrap_or("".to_owned()) != "release",
                 patched: false,
                 prerelease: false,
                 privatebuild: false,
@@ -175,14 +175,14 @@ impl VersionInfo {
                 charset: CharacterSet::Multilingual,
                 comment,
                 company_name,
-                file_description: env!("CARGO_PKG_DESCRIPTION").into(),
-                file_version: env!("CARGO_PKG_VERSION").into(),
-                internal_name: env!("CARGO_CRATE_NAME").into(),
+                file_description: std::env::var("CARGO_PKG_DESCRIPTION").unwrap_or("".to_owned()).into(),
+                file_version: std::env::var("CARGO_PKG_VERSION").unwrap_or("".to_owned()).into(),
+                internal_name: std::env::var("CARGO_PKG_NAME").unwrap_or("".to_owned()).into(),
                 legal_copyright,
                 legal_trademarks,
-                original_filename: (env!("CARGO_CRATE_NAME").to_owned() + ".exe").into(),
-                product_name: env!("CARGO_CRATE_NAME").into(),
-                product_version: env!("CARGO_PKG_VERSION").into(),
+                original_filename: (std::env::var("CARGO_PKG_NAME").unwrap_or("".to_owned()).to_owned() + ".exe").into(),
+                product_name: std::env::var("CARGO_PKG_NAME").unwrap_or("".to_owned()).into(),
+                product_version: std::env::var("CARGO_PKG_VERSION").unwrap_or("".to_owned()).into(),
                 private_build: None,
                 special_build: None,
             }],
