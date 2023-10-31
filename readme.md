@@ -23,10 +23,15 @@ Build_cfg is required for cross architecture compilation.
 - build_cfg: use [build_cfg](https://docs.rs/build_cfg) to target the correct architecture
 - embed_resource: use [embed_resource](https://docs.rs/embed-resource) crate for selecting `.rc` compiler
 - icon_ico: basic icon linking
+- icon_placeholder: add a placeholder todo icon
 - icon_png: png format support using imagemagick
 - icon_magick: generic format support using imagemagick
-- icon_placeholder: add a placeholder todo icon
 - icon_autodetect: autodetect icon format by file extension and use specific conversion function (ico, png or magick)
 - manifest: allow embedding application manifest files in the executable
 - versioninfo: allow adding windows version information to the executable
 The default features are `embed_resource`, `icon_ico`, `icon_placeholder` and `versioninfo`
+
+## breaking changes
+### 0.4.0
+- `icon_xxx`, `icon_svg` and `icon_xcf` all have been replaced by `icon_magick`
+- the `manifest` feature is now optional
