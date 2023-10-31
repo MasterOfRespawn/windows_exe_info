@@ -194,6 +194,12 @@ impl Default for VersionInfo {
         Self::from_cargo_env()
     }
 }
+/// autogenerates and links version information from cargo environment variables
+/// 
+/// panics if linking fails
+pub fn cargo_env() {
+    VersionInfo::from_cargo_env().link().unwrap();
+}
 /// Representation of the STRINGFILEINFO block in a versioninfo struct.
 /// Can be used multiple times in the main VERSIONINFO block
 /// for different languages
