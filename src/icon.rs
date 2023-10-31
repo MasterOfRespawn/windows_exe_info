@@ -60,6 +60,8 @@ pub fn icon(path: &Path) {
     }
     #[cfg(feature = "icon_xxx")]
     icon_xxx(path);
+    #[cfg(not(feature = "icon_xxx"))]
+    panic!("Can not convert or embed the icon at \"{}\". You may be missing the `icon_xxx` feature", path.display());
 }
 
 #[cfg(feature = "icon_ico")]
