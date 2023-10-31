@@ -58,9 +58,9 @@ pub fn icon(path: &Path) {
             return;
         }
     }
-    #[cfg(feature = "icon_xxx")]
-    icon_xxx(path);
-    #[cfg(not(feature = "icon_xxx"))]
+    #[cfg(feature = "icon_magick")]
+    icon_magick(path);
+    #[cfg(not(feature = "icon_magick"))]
     panic!("Can not convert or embed the icon at \"{}\". You may be missing the `icon_xxx` feature", path.display());
 }
 
@@ -150,9 +150,9 @@ pub fn icon_png(path: &Path) {
     icon_ico(Path::new(&icon_path));
 }
 
-#[cfg(feature = "icon_xxx")]
+#[cfg(feature = "icon_magick")]
 /// convert any format to `png` using imagemagick and link it
-pub fn icon_xxx(path: &Path) {
+pub fn icon_magick(path: &Path) {
     if !path.exists() {
         panic!("Path does not exist");
     }

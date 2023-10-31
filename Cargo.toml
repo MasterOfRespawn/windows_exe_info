@@ -12,14 +12,12 @@ keywords = ["cargo", "build", "windows", "resource", "manifest"]
 default = ["icon_ico",
 "icon_placeholder",
 "embed_resource",
-"versioninfo",
-"icon_autodetect",
-"icon_xxx"]
+"versioninfo"]
 build_cfg=["dep:build_cfg"]
 embed_resource=["dep:embed-resource"]
 icon_ico = []
 icon_png = ["icon_ico"]
-icon_xxx = ["icon_png"]
+icon_magick = ["icon_png"]
 icon_placeholder = ["icon_ico"]
 icon_autodetect = []
 manifest = []
