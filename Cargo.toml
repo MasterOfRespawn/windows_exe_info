@@ -12,7 +12,6 @@ keywords = ["cargo", "build", "windows", "resource", "manifest"]
 default = ["icon_ico",
 "icon_placeholder",
 "embed_resource",
-"manifest",
 "versioninfo",
 "icon_autodetect",
 "icon_xxx"]
