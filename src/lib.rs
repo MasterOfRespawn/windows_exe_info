@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-#[doc = include_str!("../readme.md")]
+#![doc = include_str!("../readme.md")]
 
 #[cfg(feature = "icon_ico")]
 pub mod icon;
