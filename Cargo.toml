@@ -20,9 +20,9 @@ icon_png = ["icon_ico"]
 icon_magick = ["icon_png"]
 icon_placeholder = ["icon_ico"]
 icon_autodetect = []
-manifest = []
 versioninfo = []
+manifest = []
 
 [dependencies]
 build_cfg = { version = "1.1.0", optional = true }
-embed-resource = { version = "2.1.1", optional = true }
+embed-resource = { version = "2.4", optional = true }
