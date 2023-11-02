@@ -35,3 +35,86 @@ The default features are `embed_resource`, `icon_ico`, `icon_placeholder` and `v
 ### 0.4.0
 - `icon_xxx`, `icon_svg` and `icon_xcf` all have been replaced by `icon_magick`
 - the `manifest` feature is now optional
+
+## examples
+add [this crate](https://crates.io/crates/windows_exe_info) to your build-dependencies
+In `Cargo.toml`
+```toml
+# the rest of the [package] section
+build = "build.rs"
+
+[build-dependencies]
+windows_exe_info = "0.4.0"
+```
+
+- adding an icon (`.ico`)
+In `build.rs`
+```rust
+extern crate windows_exe_info;
+fn main(){
+    windows_exe_info::icon::icon_ico(std::path::Path::new("PATH/TO/ICON.ico"));
+}
+```
+
+- adding version information based on cargo's environment variables
+
+In `build.rs` choose one of these options
+```rust
+extern crate windows_exe_info;
+fn main(){
+    // simple option 1
+    windows_exe_info::versioninfo::link_cargo_env();
+    // simple option 2
+    windows_exe_info::versioninfo::VersionInfo::from_cargo_env().link().unwrap();
+    // advanced option
+    windows_exe_info::versioninfo::VersionInfo::from_cargo_env_ex(
+        Some("comment"),
+        Some("company name"),
+        Some("copyright"),
+        Some("trademarks")
+    ).link().unwrap();
+    // these three function calls do effectively the same but are required only once
+}
+```
+
+- adding version information manually
+In `build.rs`
+```rust
+extern crate windows_exe_info;
+fn main(){
+    use windows_exe_info::versioninfo::*;
+    // Change these attributes as you need
+    VersionInfo {
+        file_version: Version(0, 1, 0, 0),
+        product_version: Version(0, 1, 0, 0),
+        file_flag_mask: FileFlagMask::Win16,
+        file_flags: FileFlags {
+            debug: false,
+            patched: false,
+            prerelease: false,
+            privatebuild: false,
+            infoinferred: false,
+            specialbuild: false,
+        },
+        file_os: FileOS::Windows32,
+        file_type: FileType::App,
+        file_info: vec![FileInfo {
+            lang: Language::USEnglish,
+            charset: CharacterSet::Multilingual,
+            comment: None,
+            company_name: "".into(),
+            file_description: "An example build script".into(),
+            file_version: "0.1.0.0".into(),
+            internal_name: "example".into(),
+            legal_copyright: None,
+            legal_trademarks: None,
+            original_filename: "example.exe".into(),
+            product_name: "Example".into(),
+            product_version: "0.1.0.0".into(),
+            private_build: None,
+            special_build: None,
+        }],
+    }
+    .link().unwrap();
+}
+```
