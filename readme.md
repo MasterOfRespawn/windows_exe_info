@@ -118,3 +118,18 @@ fn main(){
     .link().unwrap();
 }
 ```
+
+- embedding a [manifest](https://learn.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference)
+
+add the manifest feature
+In `Cargo.toml`
+```toml
+windows_exe_info = {version = "0.4.0", features = ["manifest"]}
+```
+In `build.rs`
+```rust
+extern crate windows_exe_info;
+fn main(){
+    windows_exe_info::manifest::manifest(std::path::Path::new("PATH/TO/MANIFEST.XML"));
+}
+```
