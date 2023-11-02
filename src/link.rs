@@ -2,7 +2,7 @@
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -o [OUTPUT] -v";
-#[cfg(all(feature = "build_cfg", not(test)))]
+#[cfg(all(feature = "build_cfg", not(test), not(feature = "embed_resource")))]
 use build_cfg::build_cfg;
 #[cfg(all(feature = "build_cfg", test))]
 use std::cfg as build_cfg;
