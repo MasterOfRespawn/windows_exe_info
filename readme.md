@@ -15,8 +15,8 @@ script will fail.
 The only icon format available without imagemagick is `.ico`.
 
 This crate only works on windows as resource scripts are a windows thing.
-Linking for web will fail (I have not yet checked linux or macos).
-Use [build_cfg](https://docs.rs/build_cfg) for checking the target being windows.
+By default it will check whether it is compiling for windows and will ignore
+linking calls otherwise. 
 Build_cfg is required for cross architecture compilation.
 
 ## Features
@@ -29,9 +29,12 @@ Build_cfg is required for cross architecture compilation.
 - icon_autodetect: autodetect icon format by file extension and use specific conversion function (ico, png or magick)
 - manifest: allow embedding application manifest files in the executable
 - versioninfo: allow adding windows version information to the executable
-The default features are `embed_resource`, `icon_ico`, `icon_placeholder` and `versioninfo`
+- check_for_windows: check if the compilation target is windows and do not link if otherwise
+The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `check_for_windows`
 
 ## breaking changes
+### 0.4.1
+- add `check_for_windows` feature by default to prevent linking against non windows operating systems
 ### 0.4.0
 - `icon_xxx`, `icon_svg` and `icon_xcf` all have been replaced by `icon_magick`
 - the `manifest` feature is now optional

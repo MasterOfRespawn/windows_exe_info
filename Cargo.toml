@@ -11,9 +11,11 @@ keywords = ["cargo", "build", "windows", "resource", "manifest"]
 [features]
 default = ["icon_ico",
 "icon_placeholder",
+"versioninfo",
 "embed_resource",
-"versioninfo"]
+"check_for_windows"]
 build_cfg=["dep:build_cfg"]
+check_for_windows = []
 embed_resource=["dep:embed-resource"]
 icon_ico = []
 icon_png = ["icon_ico"]

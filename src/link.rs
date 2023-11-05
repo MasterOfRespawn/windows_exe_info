@@ -10,6 +10,15 @@ use std::cfg as build_cfg;
 use std::process::Command;
 
 pub fn link(resource_path: String) {
+    #[cfg(feature="check_for_windows")]
+    if let Err(error) = std::env::var("CARGO_CFG_WINDOWS") {
+        // quit if variable does not exist as we are not targeting windows
+        if error == std::env::VarError::NotPresent {
+            return;
+        } else {
+            panic!("Unexpected error {error} while checking for windows target");
+        }
+    }
     #[cfg(feature = "embed_resource")]
     embed_resource::compile(resource_path, embed_resource::NONE);
 
