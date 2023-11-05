@@ -30,6 +30,7 @@ Build_cfg is required for cross architecture compilation.
 - manifest: allow embedding application manifest files in the executable
 - versioninfo: allow adding windows version information to the executable
 - check_for_windows: check if the compilation target is windows and do not link if otherwise
+
 The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `check_for_windows`
 
 ## breaking changes
@@ -41,6 +42,7 @@ The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `vers
 
 ## examples
 add [this crate](https://crates.io/crates/windows_exe_info) to your build-dependencies
+
 In `Cargo.toml`
 ```toml
 # the rest of the [package] section
@@ -51,6 +53,7 @@ windows_exe_info = "0.4.0"
 ```
 
 - adding an icon (`.ico`)
+
 In `build.rs`
 ```rust
 extern crate windows_exe_info;
@@ -81,6 +84,7 @@ fn main(){
 ```
 
 - adding version information manually
+
 In `build.rs`
 ```rust
 extern crate windows_exe_info;
@@ -124,8 +128,7 @@ fn main(){
 
 - embedding a [manifest](https://learn.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference)
 
-add the manifest feature
-In `Cargo.toml`
+add the manifest feature in `Cargo.toml`
 ```toml
 windows_exe_info = {version = "0.4.0", features = ["manifest"]}
 ```
