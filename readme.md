@@ -29,13 +29,13 @@ Build_cfg is required for cross architecture compilation.
 - icon_autodetect: autodetect icon format by file extension and use specific conversion function (ico, png or magick)
 - manifest: allow embedding application manifest files in the executable
 - versioninfo: allow adding windows version information to the executable
-- check_for_windows: check if the compilation target is windows and do not link if otherwise
+- windows_only: check if the compilation target is windows and do not link if otherwise
 
-The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `check_for_windows`
+The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `windows_only`
 
 ## breaking changes
 ### 0.4.1
-- add `check_for_windows` feature by default to prevent linking against non windows operating systems
+- add `windows_only` feature by default to prevent linking against non windows operating systems
 ### 0.4.0
 - `icon_xxx`, `icon_svg` and `icon_xcf` all have been replaced by `icon_magick`
 - the `manifest` feature is now optional

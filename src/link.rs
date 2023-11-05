@@ -10,7 +10,7 @@ use std::cfg as build_cfg;
 use std::process::Command;
 
 pub fn link(resource_path: String) {
-    #[cfg(feature="check_for_windows")]
+    #[cfg(feature="windows_only")]
     if let Err(error) = std::env::var("CARGO_CFG_WINDOWS") {
         // quit if variable does not exist as we are not targeting windows
         if error == std::env::VarError::NotPresent {

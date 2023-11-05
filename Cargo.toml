@@ -13,9 +13,9 @@ default = ["icon_ico",
 "icon_placeholder",
 "versioninfo",
 "embed_resource",
-"check_for_windows"]
+"windows_only"]
 build_cfg=["dep:build_cfg"]
-check_for_windows = []
+windows_only = []
 embed_resource=["dep:embed-resource"]
 icon_ico = []
 icon_png = ["icon_ico"]
