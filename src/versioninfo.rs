@@ -459,7 +459,7 @@ impl core::fmt::Display for FileFlags {
         if self.specialbuild {
             flags.push("VS_FF_SPECIALBUILD");
         }
-        if flags.len() == 0 {
+        if flags.is_empty() {
             write!(f, "0")
         } else {
             write!(f, "{}", flags.join(" | "))
