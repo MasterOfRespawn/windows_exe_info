@@ -151,10 +151,10 @@ impl VersionInfo {
             None
         };
         let version = Version(
-            std::env::var("CARGO_PKG_VERSION_MAJOR").unwrap_or("".to_owned()).parse().unwrap_or(0),
-            std::env::var("CARGO_PKG_VERSION_MINOR").unwrap_or("".to_owned()).parse().unwrap_or(0),
-            std::env::var("CARGO_PKG_VERSION_PATCH").unwrap_or("".to_owned()).parse().unwrap_or(0),
-            std::env::var("CARGO_PKG_VERSION_PRE").unwrap_or("".to_owned()).parse().unwrap_or(0),
+            std::env::var("CARGO_PKG_VERSION_MAJOR").unwrap_or("".to_owned()).parse().unwrap_or_default(),
+            std::env::var("CARGO_PKG_VERSION_MINOR").unwrap_or("".to_owned()).parse().unwrap_or_default(),
+            std::env::var("CARGO_PKG_VERSION_PATCH").unwrap_or("".to_owned()).parse().unwrap_or_default(),
+            std::env::var("CARGO_PKG_VERSION_PRE").unwrap_or("".to_owned()).parse().unwrap_or_default(),
         );
         Self {
             file_version: version.clone(),
