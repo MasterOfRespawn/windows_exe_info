@@ -29,7 +29,7 @@ const PLACEHOLDER: &[u8] = include_bytes!("../icon.ico");
 /// add a todo icon to the executable
 pub fn placeholder() {
     let output_dir = var("OUT_DIR").unwrap();
-    let png_path = output_dir.clone() + "/icon.ico";
+    let png_path = format!("{output_dir}/icon.ico");
     let _ = std::fs::File::options()
         .write(true)
         .create(true)
@@ -43,9 +43,8 @@ pub fn placeholder() {
 #[cfg(feature = "icon_autodetect")]
 /// autodetect icon format based on file ending
 pub fn icon(path: &Path) {
-    if !path.exists() {
-        panic!("File does not exist");
-    }
+    assert!(path.exists(), "File does not exist");
+
     if let Some(extension) = path.extension() {
         #[cfg(feature = "icon_ico")]
         if extension == "ico" {
@@ -61,43 +60,41 @@ pub fn icon(path: &Path) {
     #[cfg(feature = "icon_magick")]
     icon_magick(path);
     #[cfg(not(feature = "icon_magick"))]
-    panic!("Can not convert or embed the icon at \"{}\". You may be missing the `icon_xxx` feature", path.display());
+    panic!(
+        r#"Can not convert or embed the icon at "{:?}". You may be missing the `icon_xxx` feature"#,
+        path
+    );
 }
 
 #[cfg(feature = "icon_ico")]
 /// link icon in `ico` format to executable
 pub fn icon_ico(path: &Path) {
-    if !path.exists() {
-        panic!("Path does not exist");
-    }
+    assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
-    let buildres_file = output_dir.clone() + &unsafe { format!("/icon{}.rc", CURRENT_ICON_ID) };
+    let buildres_file = unsafe { format!("{output_dir}/icon{CURRENT_ICON_ID}.rc") };
 
     let mut file = OpenOptions::new()
         .create(true)
         .truncate(true)
         .write(true)
-        .open(buildres_file.as_str())
+        .open(&buildres_file)
         .unwrap();
     let resource_script_content = ICON_RESOURCE_SCRIPT
         .replace(
             "[PATH]",
-            &path
-                .as_os_str()
-                .to_str()
-                .unwrap()
-                .to_string()
-                .replace("\\", "/"),
+            &path.to_str().map(|path| path.replace('\\', "/")).unwrap(),
         )
-        .replace("[ID]", &unsafe { format!("icon{}", CURRENT_ICON_ID) });
+        .replace("[ID]", &unsafe { format!("icon{CURRENT_ICON_ID}") });
     unsafe {
         CURRENT_ICON_ID += 1;
     }
 
-    if resource_script_content.len() != file.write(resource_script_content.as_bytes()).unwrap() {
-        panic!("An error occurred while writing the resource file.");
-    }
+    assert_eq!(
+        resource_script_content.len(),
+        file.write(resource_script_content.as_bytes()).unwrap(),
+        "An error occurred while writing the resource file."
+    );
 
     super::link::link(buildres_file);
 }
@@ -105,18 +102,17 @@ pub fn icon_ico(path: &Path) {
 #[cfg(feature = "icon_png")]
 /// convert and scale `png` format to `ico` using imagemagick
 pub fn icon_png(path: &Path) {
-    if !path.exists() {
-        panic!("Path does not exist");
-    }
-    let output_dir = var("OUT_DIR").unwrap();
-    let icon_path = output_dir.clone() + "/icon.ico";
+    assert!(path.exists(), "Path does not exist");
 
-    for scale in MAGICK_ICON_SCALES.iter() {
+    let output_dir = var("OUT_DIR").unwrap();
+    let icon_path = format!("{output_dir}/icon.ico");
+
+    for scale in MAGICK_ICON_SCALES {
         let args = MAGICK_COMMAND_SCALE_PNG
-            .replace("[INPUT]", path.as_os_str().to_str().unwrap())
+            .replace("[INPUT]", path.to_str().unwrap())
             .replace("[SCALE]", scale)
-            .replace("[OUTPUT]", &output_dir.clone())
-            .replace("\n", " ");
+            .replace("[OUTPUT]", &output_dir)
+            .replace('\n', " ");
 
         let args = args.split(" ");
 
@@ -129,16 +125,16 @@ pub fn icon_png(path: &Path) {
             .success());
     }
 
-    //let args = ["convert", path.as_os_str().to_str().unwrap(), icon_path.as_str()];
+    // let args = ["convert", path.as_os_str().to_str().unwrap(), icon_path.as_str()];
 
     let mut cmd = Command::new("magick");
     let cmd = cmd.arg("convert");
 
-    for scale in MAGICK_ICON_SCALES.iter() {
-        cmd.arg(output_dir.clone() + scale + ".png");
+    for scale in MAGICK_ICON_SCALES {
+        cmd.arg(format!("{output_dir}{scale}.png"));
     }
 
-    cmd.arg(icon_path.as_str());
+    cmd.arg(icon_path);
 
     assert!(cmd
         .spawn()
@@ -153,15 +149,14 @@ pub fn icon_png(path: &Path) {
 #[cfg(feature = "icon_magick")]
 /// convert any format to `png` using imagemagick and link it
 pub fn icon_magick(path: &Path) {
-    if !path.exists() {
-        panic!("Path does not exist");
-    }
+    assert!(path.exists(), "Path does not exist");
+
     let output_dir = var("OUT_DIR").unwrap();
-    let png_path = output_dir.clone() + "/icon.png";
+    let png_path = format!("{output_dir}/icon.png");
 
     let args = MAGICK_COMMAND_XXX_TO_PNG
-        .replace("[INPUT]", path.as_os_str().to_str().unwrap())
-        .replace("[OUTPUT]", png_path.as_str());
+        .replace("[INPUT]", path.to_str().unwrap())
+        .replace("[OUTPUT]", &png_path);
     let args = args.split(" ");
 
     assert!(Command::new("magick")
