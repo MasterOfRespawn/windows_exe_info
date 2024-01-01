@@ -440,34 +440,29 @@ pub struct FileFlags {
 }
 impl core::fmt::Display for FileFlags {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        let mut flags: Vec<String> = vec![];
+        let mut flags = Vec::new();
         if self.debug {
-            flags.push("VS_FF_DEBUG".to_string());
+            flags.push("VS_FF_DEBUG");
         }
         if self.patched {
-            flags.push("VS_FF_PRERELEASE".to_string());
+            flags.push("VS_FF_PRERELEASE");
         }
         if self.prerelease {
-            flags.push("VS_FF_PATCHED".to_string());
+            flags.push("VS_FF_PATCHED");
         }
         if self.privatebuild {
-            flags.push("VS_FF_PRIVATEBUILD".to_string());
+            flags.push("VS_FF_PRIVATEBUILD");
         }
         if self.infoinferred {
-            flags.push("VS_FF_INFOINFERRED".to_string());
+            flags.push("VS_FF_INFOINFERRED");
         }
         if self.specialbuild {
-            flags.push("VS_FF_SPECIALBUILD".to_string());
+            flags.push("VS_FF_SPECIALBUILD");
         }
         if flags.len() == 0 {
             write!(f, "0")
         } else {
-            let mut iter = flags.into_iter();
-            let mut string = iter.next().unwrap();
-            for i in iter {
-                string = string + " | " + &i;
-            }
-            write!(f, "{string}")
+            write!(f, "{}", flags.join(" | "))
         }
     }
 }
