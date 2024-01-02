@@ -10,24 +10,24 @@ use std::cfg as build_cfg;
 use std::process::Command;
 
 pub fn link(resource_path: String) {
-    #[cfg(feature="windows_only")]
+    #[cfg(feature = "windows_only")]
     if let Err(error) = std::env::var("CARGO_CFG_WINDOWS") {
         // quit if variable does not exist as we are not targeting windows
         if error == std::env::VarError::NotPresent {
             return;
-        } else {
-            panic!("Unexpected error {error} while checking for windows target");
         }
+
+        panic!("Unexpected error {error} while checking for windows target");
     }
     #[cfg(feature = "embed_resource")]
     embed_resource::compile(resource_path, embed_resource::NONE);
 
     #[cfg(not(feature = "embed_resource"))]
     {
-        let resource_file = resource_path.clone() + ".a";
+        let resource_file = format!("{resource_path}.a");
         let args = WINDRES_COMMAND
-            .replace("[INPUT]", resource_path.as_str())
-            .replace("[OUTPUT]", resource_file.as_str());
+            .replace("[INPUT]", &resource_path)
+            .replace("[OUTPUT]", &resource_file);
 
         #[cfg(feature = "build_cfg")]
         let args = if build_cfg!(target_os = "windows") {
