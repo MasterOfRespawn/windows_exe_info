@@ -134,7 +134,7 @@ pub fn icon_png(path: &Path) {
         cmd.arg(format!("{output_dir}{scale}.png"));
     }
 
-    cmd.arg(icon_path);
+    cmd.arg(&icon_path);
 
     assert!(cmd
         .spawn()
