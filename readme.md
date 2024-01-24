@@ -27,13 +27,16 @@ Build_cfg is required for cross architecture compilation.
 - icon_png: png format support using imagemagick
 - icon_magick: generic format support using imagemagick
 - icon_autodetect: autodetect icon format by file extension and use specific conversion function (ico, png or magick)
-- manifest: allow embedding application manifest files in the executable
+- manifest: allow embedding [Windows application manifest xml files](https://learn.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference) in the executable \
+the manifest feature is **not** required to embed version information or an icon
 - versioninfo: allow adding windows version information to the executable
 - windows_only: check if the compilation target is windows and do not link if otherwise
 
 The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `windows_only`
 
 ## breaking changes
+### 0.4.2
+- none
 ### 0.4.1
 - add `windows_only` feature by default to prevent linking against non windows operating systems
 ### 0.4.0
@@ -49,7 +52,7 @@ In `Cargo.toml`
 build = "build.rs"
 
 [build-dependencies]
-windows_exe_info = "0.4.0"
+windows_exe_info = "0.4"
 ```
 
 - adding an icon (`.ico`)
@@ -130,7 +133,7 @@ fn main(){
 
 add the manifest feature in `Cargo.toml`
 ```toml
-windows_exe_info = {version = "0.4.0", features = ["manifest"]}
+windows_exe_info = {version = "0.4", features = ["manifest"]}
 ```
 In `build.rs`
 ```rust
