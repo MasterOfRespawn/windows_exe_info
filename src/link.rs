@@ -1,3 +1,4 @@
+use camino::Utf8Path;
 #[cfg(feature = "build_cfg")]
 const WINDRES_COMMAND: &str = "-i [INPUT] -O coff -F [ARCH] -o [OUTPUT] -v";
 #[cfg(not(feature = "build_cfg"))]
@@ -9,7 +10,8 @@ use std::cfg as build_cfg;
 #[cfg(not(feature = "embed_resource"))]
 use std::process::Command;
 
-pub fn link(resource_path: String) {
+pub fn link<P: AsRef<Utf8Path>>(resource_path: P) {
+    let resource_path = resource_path.as_ref();
     #[cfg(feature = "windows_only")]
     if let Err(error) = std::env::var("CARGO_CFG_WINDOWS") {
         // quit if variable does not exist as we are not targeting windows
@@ -26,7 +28,7 @@ pub fn link(resource_path: String) {
     {
         let resource_file = format!("{resource_path}.a");
         let args = WINDRES_COMMAND
-            .replace("[INPUT]", &resource_path)
+            .replace("[INPUT]", resource_path.as_str())
             .replace("[OUTPUT]", &resource_file);
 
         #[cfg(feature = "build_cfg")]
