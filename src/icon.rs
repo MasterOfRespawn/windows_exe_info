@@ -10,9 +10,9 @@ extern crate embed_resource;
 use std::env::var;
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::path::Path;
 #[cfg(feature = "icon_png")]
 use std::process::Command;
+use camino::Utf8Path;
 
 const ICON_RESOURCE_SCRIPT: &str = "[ID] ICON \"[PATH]\"\n";
 const MAGICK_COMMAND_SCALE_PNG: &str = "convert [INPUT] -scale [SCALE]x[SCALE] -extent [SCALE]x[SCALE] -background None -alpha on [OUTPUT][SCALE].png";
@@ -37,12 +37,13 @@ pub fn placeholder() {
         .unwrap()
         .write(PLACEHOLDER)
         .unwrap();
-    icon_ico(&std::path::PathBuf::from(&png_path));
+    icon_ico(png_path);
 }
 
 #[cfg(feature = "icon_autodetect")]
 /// autodetect icon format based on file ending
-pub fn icon(path: &Path) {
+pub fn icon<P: AsRef<Utf8Path>>(path: P) {
+    let path = path.as_ref();
     assert!(path.exists(), "File does not exist");
 
     if let Some(extension) = path.extension() {
@@ -68,7 +69,8 @@ pub fn icon(path: &Path) {
 
 #[cfg(feature = "icon_ico")]
 /// link icon in `ico` format to executable
-pub fn icon_ico(path: &Path) {
+pub fn icon_ico<P: AsRef<Utf8Path>>(path: P) {
+    let path = path.as_ref();
     assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
@@ -83,7 +85,7 @@ pub fn icon_ico(path: &Path) {
     let resource_script_content = ICON_RESOURCE_SCRIPT
         .replace(
             "[PATH]",
-            &path.to_str().map(|path| path.replace('\\', "/")).unwrap(),
+            &path.as_str().replace('\\', "/"),
         )
         .replace("[ID]", &unsafe { format!("icon{CURRENT_ICON_ID}") });
     unsafe {
@@ -101,7 +103,8 @@ pub fn icon_ico(path: &Path) {
 
 #[cfg(feature = "icon_png")]
 /// convert and scale `png` format to `ico` using imagemagick
-pub fn icon_png(path: &Path) {
+pub fn icon_png<P: AsRef<Utf8Path>>(path: P) {
+    let path = path.as_ref();
     assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
@@ -109,7 +112,7 @@ pub fn icon_png(path: &Path) {
 
     for scale in MAGICK_ICON_SCALES {
         let args = MAGICK_COMMAND_SCALE_PNG
-            .replace("[INPUT]", path.to_str().unwrap())
+            .replace("[INPUT]", path.as_str())
             .replace("[SCALE]", scale)
             .replace("[OUTPUT]", &output_dir)
             .replace('\n', " ");
@@ -143,19 +146,20 @@ pub fn icon_png(path: &Path) {
         .expect("Execution failed")
         .success());
 
-    icon_ico(Path::new(&icon_path));
+    icon_ico(icon_path);
 }
 
 #[cfg(feature = "icon_magick")]
 /// convert any format to `png` using imagemagick and link it
-pub fn icon_magick(path: &Path) {
+pub fn icon_magick<P: AsRef<Utf8Path>>(path: P) {
+    let path = path.as_ref();
     assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
     let png_path = format!("{output_dir}/icon.png");
 
     let args = MAGICK_COMMAND_XXX_TO_PNG
-        .replace("[INPUT]", path.to_str().unwrap())
+        .replace("[INPUT]", path.as_str())
         .replace("[OUTPUT]", &png_path);
     let args = args.split(" ");
 
@@ -167,5 +171,5 @@ pub fn icon_magick(path: &Path) {
         .expect("Execution failed")
         .success());
 
-    icon_png(Path::new(&png_path));
+    icon_png(png_path);
 }

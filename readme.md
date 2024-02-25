@@ -61,7 +61,7 @@ In `build.rs`
 ```rust
 extern crate windows_exe_info;
 fn main(){
-    windows_exe_info::icon::icon_ico(std::path::Path::new("PATH/TO/ICON.ico"));
+    windows_exe_info::icon::icon_ico("PATH/TO/ICON.ico");
 }
 ```
 
@@ -139,6 +139,6 @@ In `build.rs`
 ```rust
 extern crate windows_exe_info;
 fn main(){
-    windows_exe_info::manifest::manifest(std::path::Path::new("PATH/TO/MANIFEST.XML"));
+    windows_exe_info::manifest::manifest("PATH/TO/MANIFEST.XML");
 }
 ```

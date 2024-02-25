@@ -1,14 +1,15 @@
 use std::env::var;
 use std::fs::OpenOptions;
 use std::io::Write;
-use std::path::Path;
+use camino::Utf8Path;
 
 const MANIFEST_RESOURCE_SCRIPT: &str = "#define RT_MANIFEST 24
 [ID] RT_MANIFEST \"[PATH]\"\n";
 pub(crate) static mut CURRENT_MANIFEST_ID: u16 = 0;
 
 /// adds an application manifest to an executable
-pub fn manifest(path: &Path) {
+pub fn manifest<P: AsRef<Utf8Path>>(path: P) {
+    let path = path.as_ref();
     assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
@@ -23,7 +24,7 @@ pub fn manifest(path: &Path) {
     let resource_script_content = MANIFEST_RESOURCE_SCRIPT
         .replace(
             "[PATH]",
-            &path.to_str().map(|path| path.replace('\\', "/")).unwrap(),
+            &path.as_str().replace('\\', "/"),
         )
         .replace("[ID]", &unsafe { format!("manifest{CURRENT_MANIFEST_ID}") });
     unsafe {
