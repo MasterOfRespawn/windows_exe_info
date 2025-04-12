@@ -1,6 +1,6 @@
 [package]
 name = "windows_exe_info"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2021"
 license = "MIT"
 description = "A cargo build script library for adding file information to windows executables"
