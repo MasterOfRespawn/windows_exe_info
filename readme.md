@@ -30,11 +30,16 @@ Build_cfg is required for cross architecture compilation.
 - manifest: allow embedding [Windows application manifest xml files](https://learn.microsoft.com/en-us/windows/win32/sbscs/manifest-files-reference) in the executable \
 the manifest feature is **not** required to embed version information or an icon
 - versioninfo: allow adding windows version information to the executable
+- versioninfo_force_utf8: format Versioninfo using utf8 instead of infering it using the compilation target
+- versioninfo_force_utf16: format Versioninfo using utf16 instead of infering it using the compilation target
 - windows_only: check if the compilation target is windows and do not link if otherwise
 
 The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `windows_only`
 
 ## breaking changes
+### 0.5.0
+- Versioninfo will be formatted as utf16 for msvc targets
+  - use `versioninfo_force_utf8` to always format using utf8
 ### 0.4.2
 - none
 ### 0.4.1
