@@ -148,6 +148,7 @@ fn multi_icon_id() {
 
     // check (2)
     unsafe {
-        assert_eq!(CURRENT_ICON_ID, ITERATIONS);
+        let current_icon_id = CURRENT_ICON_ID;
+        assert_eq!(current_icon_id, ITERATIONS);
     }
 }

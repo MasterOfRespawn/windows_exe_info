@@ -74,7 +74,8 @@ pub fn icon_ico<P: AsRef<Utf8Path>>(path: P) {
     assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
-    let buildres_file = unsafe { format!("{output_dir}/icon{CURRENT_ICON_ID}.rc") };
+    let ci = unsafe { CURRENT_ICON_ID };
+    let buildres_file = format!("{output_dir}/icon{ci}.rc");
 
     let mut file = OpenOptions::new()
         .create(true)
@@ -87,7 +88,7 @@ pub fn icon_ico<P: AsRef<Utf8Path>>(path: P) {
             "[PATH]",
             &path.as_str().replace('\\', "/"),
         )
-        .replace("[ID]", &unsafe { format!("icon{CURRENT_ICON_ID}") });
+        .replace("[ID]", &format!("icon{ci}"));
     unsafe {
         CURRENT_ICON_ID += 1;
     }
