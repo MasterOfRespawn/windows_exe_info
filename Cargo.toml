@@ -23,6 +23,8 @@ icon_magick = ["icon_png"]
 icon_placeholder = ["icon_ico"]
 icon_autodetect = []
 versioninfo = []
+versioninfo_force_utf8 = ["versioninfo"]
+versioninfo_force_utf16 = ["versioninfo"]
 manifest = []
 
 [dependencies]

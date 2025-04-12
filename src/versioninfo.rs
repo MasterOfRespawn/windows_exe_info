@@ -127,19 +127,34 @@ impl VersionInfo {
         }
         let output_dir = var("OUT_DIR").unwrap();
         let buildres_file = format!("{output_dir}/info.rc");
-        let mut file = OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .open(&buildres_file)
-            .unwrap();
-        let resource_script_content = self.to_string();
+        {
+            let mut file = OpenOptions::new()
+                .create(true)
+                .write(true)
+                .truncate(true)
+                .open(&buildres_file)
+                .unwrap();
+            let resource_script_content = self.to_string();
 
-        assert_eq!(
-            resource_script_content.len(),
-            file.write(resource_script_content.as_bytes()).unwrap(),
-            "An error occurred while writing the resource file."
-        );
+            let target = std::env::var("TARGET").expect("Can not read rust target");
+            #[cfg(all(feature = "versioninfo_force_utf8", feature = "versioninfo_force_utf16"))]
+            panic!("Versioninfo must either be utf8 or utf16, not both");
+
+            if (target.ends_with("msvc") || cfg!(feature = "versioninfo_force_utf16")) && !cfg!(feature = "versioninfo_force_utf8") {
+                // write UTF16LE as we expect to use microsoft winres
+
+                // no buffering -> file is small ...
+                file.write_all(&[0xFF, 0xFE]).unwrap(); // UTF16LE-BOM
+                for utf16 in resource_script_content.encode_utf16() {
+                    file.write_all(&utf16.to_le_bytes()).unwrap();
+                }
+            } else if (target.ends_with("gnu") || cfg!(feature = "versioninfo_force_utf8")) && !cfg!(feature = "versioninfo_force_utf16") {
+                // write UTF8 as we expect to use mingw windres
+                file.write_all(resource_script_content.as_bytes()).unwrap();
+            } else {
+                panic!("Can not infer whether Versioninfo should be utf8 or utf16");
+            }
+        } // implicit close file
 
         super::link::link(buildres_file);
         unsafe { HAS_LINKED_VERSIONINFO = true };
