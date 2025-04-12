@@ -31,6 +31,7 @@ pub fn link<P: AsRef<Utf8Path>>(resource_path: P) {
             .replace("[INPUT]", resource_path.as_str())
             .replace("[OUTPUT]", &resource_file);
 
+        #[cfg(feature = "build_cfg")]
         let args = if build_cfg!(target_os = "windows") {
             if build_cfg!(target_pointer_width = "64") {
                 args.replace("[ARCH]", "pe-x86-64")
@@ -41,9 +42,9 @@ pub fn link<P: AsRef<Utf8Path>>(resource_path: P) {
             panic!("Invalid target operating system");
         };
 
-        #[cfg(windows)]
+        #[cfg(any(windows, not(feature = "build_cfg")))]
         let cmd = "windres";
-        #[cfg(not(windows))]
+        #[cfg(not(any(windows, not(feature = "build_cfg"))))]
         let cmd = if build_cfg!(target_pointer_width = "64") {
             "x86_64-w64-mingw32-windres"
         } else {
@@ -60,7 +61,4 @@ pub fn link<P: AsRef<Utf8Path>>(resource_path: P) {
 
         println!("cargo:rustc-link-arg={resource_file}"); // Tell it to link
     }
-    // todo: add generic windres parameters if build_cfg is disabled
-    #[cfg(not(any(feature = "embed_resource", feature = "build_cfg")))]
-    panic!("'embed_resource' or 'build_cfg' must be enabled for linking.");
 }
