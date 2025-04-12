@@ -151,7 +151,7 @@ impl VersionInfo {
             } else if (target.ends_with("gnu") || cfg!(feature = "versioninfo_force_utf8")) && !cfg!(feature = "versioninfo_force_utf16") {
                 // write UTF8 as we expect to use mingw windres
                 file.write_all(resource_script_content.as_bytes()).unwrap();
-            } else {
+            } else if target.contains("windows") {
                 panic!("Can not infer whether Versioninfo should be utf8 or utf16");
             }
         } // implicit close file
