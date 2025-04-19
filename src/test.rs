@@ -1,3 +1,4 @@
+use std::sync::atomic::Ordering;
 #[cfg(feature = "versioninfo")]
 use crate::versioninfo::*;
 
@@ -78,9 +79,9 @@ fn format_version_info() {
     assert_eq!(rc.to_string(), FORMATTED_VERSIONINFO);
 
     // check double linking prevention
-    assert!(!unsafe { HAS_LINKED_VERSIONINFO });
+    assert!(!HAS_LINKED_VERSION_INFO.load(Ordering::Relaxed));
     rc.link().unwrap();
-    assert!(unsafe { HAS_LINKED_VERSIONINFO });
+    assert!(HAS_LINKED_VERSION_INFO.load(Ordering::Relaxed));
     assert!(rc.link().is_err());
 
     // cleanup
@@ -147,8 +148,5 @@ fn multi_icon_id() {
     std::fs::remove_file(&temp_file).unwrap();
 
     // check (2)
-    unsafe {
-        let current_icon_id = CURRENT_ICON_ID;
-        assert_eq!(current_icon_id, ITERATIONS);
-    }
+    assert_eq!(CURRENT_ICON_ID.load(Ordering::Relaxed), ITERATIONS);
 }
