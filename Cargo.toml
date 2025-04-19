@@ -30,4 +30,4 @@ manifest = []
 [dependencies]
 build_cfg = { version = "1", optional = true }
 camino = "1"
-embed-resource = { version = "2", optional = true }
+embed-resource = { version = "3", optional = true }
