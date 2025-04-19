@@ -12,6 +12,7 @@ use std::fs::OpenOptions;
 use std::io::Write;
 #[cfg(feature = "icon_png")]
 use std::process::Command;
+use std::sync::atomic::{AtomicU16, Ordering};
 use camino::Utf8Path;
 
 const ICON_RESOURCE_SCRIPT: &str = "[ID] ICON \"[PATH]\"\n";
@@ -21,7 +22,7 @@ const MAGICK_COMMAND_XXX_TO_PNG: &str =
 
 const MAGICK_ICON_SCALES: &[&str] = &["8", "16", "32", "48", "64", "128", "256"];
 
-pub(crate) static mut CURRENT_ICON_ID: u16 = 0;
+pub(crate) static CURRENT_ICON_ID: AtomicU16 = AtomicU16::new(0);
 
 #[cfg(feature = "icon_placeholder")]
 const PLACEHOLDER: &[u8] = include_bytes!("../icon.ico");
@@ -74,24 +75,22 @@ pub fn icon_ico<P: AsRef<Utf8Path>>(path: P) {
     assert!(path.exists(), "Path does not exist");
 
     let output_dir = var("OUT_DIR").unwrap();
-    let ci = unsafe { CURRENT_ICON_ID };
-    let buildres_file = format!("{output_dir}/icon{ci}.rc");
+    let build_res_file = format!("{output_dir}/icon{}.rc", CURRENT_ICON_ID.load(Ordering::Relaxed));
 
     let mut file = OpenOptions::new()
         .create(true)
         .truncate(true)
         .write(true)
-        .open(&buildres_file)
+        .open(&build_res_file)
         .unwrap();
     let resource_script_content = ICON_RESOURCE_SCRIPT
         .replace(
             "[PATH]",
             &path.as_str().replace('\\', "/"),
         )
-        .replace("[ID]", &format!("icon{ci}"));
-    unsafe {
-        CURRENT_ICON_ID += 1;
-    }
+        .replace("[ID]", &format!("icon{}", CURRENT_ICON_ID.load(Ordering::Relaxed)));
+    
+    CURRENT_ICON_ID.fetch_add(1, Ordering::Relaxed);
 
     assert_eq!(
         resource_script_content.len(),
@@ -99,7 +98,7 @@ pub fn icon_ico<P: AsRef<Utf8Path>>(path: P) {
         "An error occurred while writing the resource file."
     );
 
-    super::link::link(buildres_file);
+    super::link::link(build_res_file);
 }
 
 #[cfg(feature = "icon_png")]
