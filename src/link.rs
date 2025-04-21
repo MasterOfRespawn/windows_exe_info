@@ -21,8 +21,9 @@ pub fn link<P: AsRef<Utf8Path>>(resource_path: P) {
 
         panic!("Unexpected error {error} while checking for windows target");
     }
+    
     #[cfg(feature = "embed_resource")]
-    embed_resource::compile(resource_path, embed_resource::NONE);
+    embed_resource::compile(resource_path, embed_resource::NONE).manifest_optional().unwrap();
 
     #[cfg(all(not(feature = "embed_resource"), feature = "build_cfg"))]
     {
