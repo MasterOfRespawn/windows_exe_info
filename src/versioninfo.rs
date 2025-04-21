@@ -3,8 +3,9 @@ use std::env::var;
 use std::fmt::Write as FmtWrite;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::sync::atomic::{AtomicBool, Ordering};
 
-pub(crate) static mut HAS_LINKED_VERSIONINFO: bool = false;
+pub(crate) static HAS_LINKED_VERSION_INFO: AtomicBool = AtomicBool::new(false);
 
 /// The main wrapper struct.
 /// Implements custom formatting converting it into an rc script.
@@ -122,7 +123,7 @@ impl VersionInfo {
     /// Writes the content of the struct into a file and tries to compile and link it
     /// panics if it is invoked more than once
     pub fn link(&self) -> Result<(), &str> {
-        if unsafe { HAS_LINKED_VERSIONINFO } {
+        if HAS_LINKED_VERSION_INFO.load(Ordering::Relaxed) {
             return Err("Only one versioninfo can be linked");
         }
         let output_dir = var("OUT_DIR").unwrap();
@@ -157,7 +158,7 @@ impl VersionInfo {
         } // implicit close file
 
         super::link::link(buildres_file);
-        unsafe { HAS_LINKED_VERSIONINFO = true };
+        HAS_LINKED_VERSION_INFO.store(true, Ordering::Relaxed);
         Ok(())
     }
 
