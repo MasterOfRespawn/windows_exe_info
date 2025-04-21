@@ -37,6 +37,10 @@ the manifest feature is **not** required to embed version information or an icon
 The default features are `embed_resource`, `icon_ico`, `icon_placeholder`, `versioninfo` and `windows_only`
 
 ## breaking changes
+### 0.5.2
+- none
+### 0.5.1
+- none
 ### 0.5.0
 - Versioninfo will be formatted as utf16 for msvc targets
   - use `versioninfo_force_utf8` to always format using utf8
@@ -57,7 +61,7 @@ In `Cargo.toml`
 build = "build.rs"
 
 [build-dependencies]
-windows_exe_info = "0.4"
+windows_exe_info = "0.5"
 ```
 
 - adding an icon (`.ico`)
@@ -138,7 +142,7 @@ fn main(){
 
 add the manifest feature in `Cargo.toml`
 ```toml
-windows_exe_info = {version = "0.4", features = ["manifest"]}
+windows_exe_info = {version = "0.5", features = ["manifest"]}
 ```
 In `build.rs`
 ```rust
