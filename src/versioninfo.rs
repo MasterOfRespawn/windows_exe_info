@@ -139,7 +139,7 @@ impl VersionInfo {
 
             let target = std::env::var("TARGET").expect("Can not read rust target");
             #[cfg(all(feature = "versioninfo_force_utf8", feature = "versioninfo_force_utf16"))]
-            panic!("Versioninfo must either be utf8 or utf16, not both");
+            panic!("Versioninfo can not be utf8 and utf16 at the same time. Please check selected features.");
 
             if (target.ends_with("msvc") || cfg!(feature = "versioninfo_force_utf16")) && !cfg!(feature = "versioninfo_force_utf8") {
                 // write UTF16LE as we expect to use microsoft winres
@@ -149,11 +149,11 @@ impl VersionInfo {
                 for utf16 in resource_script_content.encode_utf16() {
                     file.write_all(&utf16.to_le_bytes()).unwrap();
                 }
-            } else if (target.ends_with("gnu") || cfg!(feature = "versioninfo_force_utf8")) && !cfg!(feature = "versioninfo_force_utf16") {
+            } else if (target.ends_with("gnu") || target.ends_with("gnullvm") || cfg!(feature = "versioninfo_force_utf8")) && !cfg!(feature = "versioninfo_force_utf16") {
                 // write UTF8 as we expect to use mingw windres
                 file.write_all(resource_script_content.as_bytes()).unwrap();
             } else if target.contains("windows") {
-                panic!("Can not infer whether Versioninfo should be utf8 or utf16");
+                panic!("Can not infer whether Versioninfo should be utf8 or utf16. Please use the `versioninfo_force_utf8` or `versioninfo_force_utf16` features to specify a file encoding.");
             }
         } // implicit close file
 
